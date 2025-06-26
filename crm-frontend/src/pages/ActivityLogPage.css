@@ -1,0 +1,153 @@
+/* ActivityLogPage.css */
+
+.activity-log-container {
+  padding: 40px 60px;
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
+}
+
+.activity-log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.activity-log-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+.activity-log-subtitle {
+  color: #6b7280;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.activity-table-wrapper {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.activity-table th {
+  text-align: left;
+  padding: 16px 20px;
+  background-color: #f3f4f6;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.activity-table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  font-size: 15px;
+  color: #374151;
+}
+
+.activity-type {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.activity-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-user img {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.action-create {
+  color: #22c55e;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.action-update {
+  color: #3b82f6;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.action-delete {
+  color: #ef4444;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.action-view {
+  color: #8b5cf6;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.target-text {
+  color: #374151;
+}
+
+.date-time {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.activity-table-pagination {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.activity-table-pagination span {
+  cursor: pointer;
+}
+
+.activity-table-pagination .current-page {
+  font-weight: 600;
+  color: #111827;
+}
+
+.activity-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.activity-actions button {
+  background: none;
+  border: none;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.activity-actions button:hover {
+  color: #2563eb;
+}
