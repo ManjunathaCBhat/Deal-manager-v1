@@ -1,13 +1,115 @@
 import React from 'react';
+import './UserManagementPage.css';
+import { FaEdit, FaTrash, FaUserSlash, FaBell } from 'react-icons/fa';
 
-function UserManagementPage() {
+const users = [
+  {
+    name: 'Ayaan Shekhani',
+    email: 'ayaan@crm.com',
+    role: 'Admin',
+    status: 'Active',
+    lastLogin: 'Today at 2:00 PM',
+    avatar: 'https://randomuser.me/api/portraits/men/10.jpg'
+  },
+  {
+    name: 'Fatima Noor',
+    email: 'fatima.noor@crm.com',
+    role: 'User',
+    status: 'Inactive',
+    lastLogin: 'June 22, 2025 – 4:18 PM',
+    avatar: 'https://randomuser.me/api/portraits/women/11.jpg'
+  },
+  {
+    name: 'Blake Johnston',
+    email: 'blake@crm.com',
+    role: 'User',
+    status: 'Active',
+    lastLogin: 'Yesterday at 10:30 AM',
+    avatar: 'https://randomuser.me/api/portraits/men/12.jpg'
+  }
+];
+
+const UserManagementPage = () => {
   return (
-    <div>
-      <h1>User Management</h1>
-      <p>Manage and monitor user accounts and permissions</p>
-      {/* Table of users with role, status, last login, and actions like edit, delete */}
+    <div className="user-management-page">
+      {/* Nav Bar */}
+      <nav className="top-nav">
+        <div className="nav-left">CRM Project</div>
+        <div className="nav-center">
+          <a href="/dashboard" className="nav-link">Dashboard</a>
+          <a href="/companies" className="nav-link">Companies</a>
+          <a href="/customers" className="nav-link">Customers</a>
+          <a href="/deals" className="nav-link">Deals</a>
+          <a href="/user-management" className="nav-link active">Management</a>
+          <a href="/activity-log" className="nav-link">Activity</a>
+        </div>
+        <div className="nav-right">
+          <FaBell className="nav-icon" />
+          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
+        </div>
+      </nav>
+
+      {/* Page Header */}
+      <div className="user-header">
+        <h1>User Management</h1>
+        <button className="add-user-btn">➕ Add User</button>
+      </div>
+
+      {/* Filters */}
+      <div className="user-filters">
+        <select>
+          <option>All Roles</option>
+          <option>Admin</option>
+          <option>User</option>
+        </select>
+        <select>
+          <option>All Status</option>
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+        <input type="text" placeholder="Search by name or email" />
+      </div>
+
+      {/* Table */}
+      <div className="user-table-wrapper">
+        <table className="user-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Last Login</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, idx) => (
+              <tr key={idx}>
+                <td className="user-name">
+                  <img src={user.avatar} alt={user.name} />
+                  <span>{user.name}</span>
+                </td>
+                <td>{user.role}</td>
+                <td>{user.email}</td>
+                <td>
+                  <span className={`status-badge ${user.status.toLowerCase()}`}>
+                    {user.status}
+                  </span>
+                </td>
+                <td>{user.lastLogin}</td>
+                <td className="user-actions">
+                  <FaEdit title="Edit" />
+                  <FaTrash title="Delete" />
+                  <FaUserSlash title="Deactivate" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-}
+};
 
 export default UserManagementPage;

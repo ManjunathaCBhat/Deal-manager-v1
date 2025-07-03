@@ -1,6 +1,6 @@
 import React from 'react';
 import './ActivityLogPage.css';
-import { FaFilter, FaDownload } from 'react-icons/fa';
+import { FaFilter, FaDownload, FaBell } from 'react-icons/fa';
 
 const activities = [
   {
@@ -8,7 +8,7 @@ const activities = [
     type: 'Created Customer',
     userImage: 'https://randomuser.me/api/portraits/men/1.jpg',
     userName: 'John Smith',
-    action: 'CREATE',
+    action: 'Create',
     actionClass: 'action-create',
     target: 'Customer "John Doe"',
     time: 'Today at 3:32 PM'
@@ -18,7 +18,7 @@ const activities = [
     type: 'Updated Deal',
     userImage: 'https://randomuser.me/api/portraits/men/2.jpg',
     userName: 'Alex Rodriguez',
-    action: 'UPDATE',
+    action: 'Update',
     actionClass: 'action-update',
     target: 'Deal "#4312 – Website Redesign"',
     time: 'Today at 2:08 PM'
@@ -28,7 +28,7 @@ const activities = [
     type: 'Deleted Company',
     userImage: 'https://randomuser.me/api/portraits/men/3.jpg',
     userName: 'Mike Davis',
-    action: 'DELETE',
+    action: 'Delete',
     actionClass: 'action-delete',
     target: 'Company "GreenTech Ltd."',
     time: 'Yesterday at 6:10 PM'
@@ -38,7 +38,7 @@ const activities = [
     type: 'Viewed Report',
     userImage: 'https://randomuser.me/api/portraits/men/4.jpg',
     userName: 'Mike Chen',
-    action: 'VIEW',
+    action: 'View',
     actionClass: 'action-view',
     target: 'Report "Q2 Pipeline Summary"',
     time: 'June 22, 2025 – 10:45 AM'
@@ -48,7 +48,7 @@ const activities = [
     type: 'Created Company',
     userImage: 'https://randomuser.me/api/portraits/men/5.jpg',
     userName: 'Jake Crittens',
-    action: 'CREATE',
+    action: 'Create',
     actionClass: 'action-create',
     target: 'Company "Tesla Inc."',
     time: 'June 22, 2025 – 9:15 AM'
@@ -58,7 +58,25 @@ const activities = [
 const ActivityLogPage = () => {
   return (
     <div className="activity-log-container">
-      {/* Top Header */}
+
+      {/* ✅ Navigation Bar */}
+      <nav className="top-nav">
+        <div className="nav-left">CRM Project</div>
+        <div className="nav-center">
+          <a href="/dashboard" className="nav-link">Dashboard</a>
+          <a href="/companies" className="nav-link">Companies</a>
+          <a href="/customers" className="nav-link">Customers</a>
+          <a href="/deals" className="nav-link">Deals</a>
+          <a href="/user-management" className="nav-link">Management</a>
+          <a href="/activity-log" className="nav-link active">Activity</a>
+        </div>
+        <div className="nav-right">
+          <FaBell className="nav-icon" />
+          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
+        </div>
+      </nav>
+
+      {/* Header */}
       <div className="activity-log-header">
         <h1>Activity Log</h1>
         <div className="activity-actions">
