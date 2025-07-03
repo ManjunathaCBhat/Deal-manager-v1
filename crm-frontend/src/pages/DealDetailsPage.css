@@ -1,0 +1,79 @@
+.deal-details-page {
+  font-family: 'Inter', sans-serif;
+  padding: 40px 60px;
+  background: #f9fafb;
+}
+
+.deal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.deal-status.negotiation {
+  color: #10b981;
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: 6px;
+}
+
+.assigned-rep {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.assigned-rep img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.deal-meta {
+  text-align: right;
+}
+
+.deal-meta a {
+  display: block;
+  margin-top: 10px;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.deal-sections {
+  display: flex;
+  gap: 40px;
+}
+
+.deal-left {
+  flex: 2;
+}
+
+.deal-right {
+  flex: 1;
+}
+
+section {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.tasks ul, .timeline ul {
+  list-style: none;
+  padding: 0;
+}
+
+.upload-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}

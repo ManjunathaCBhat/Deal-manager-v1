@@ -82,25 +82,25 @@
 .action-create {
   color: #22c55e;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .action-update {
   color: #3b82f6;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .action-delete {
   color: #ef4444;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .action-view {
   color: #8b5cf6;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .target-text {
