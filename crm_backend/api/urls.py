@@ -1,8 +1,12 @@
-from django.urls import path
-from api.views import DealListCreate, CompanyListCreate, CustomerListCreate
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CompanyViewSet, CustomerViewSet, DealViewSet
+
+router = DefaultRouter()
+router.register(r'companies', CompanyViewSet)
+router.register(r'customers', CustomerViewSet)
+router.register(r'deals', DealViewSet)
 
 urlpatterns = [
-    path('deals/', DealListCreate.as_view(), name='deal-list'),
-    path('companies/', CompanyListCreate.as_view(), name='company-list'),
-    path('customers/', CustomerListCreate.as_view(), name='customer-list'),
+    path('', include(router.urls)),
 ]

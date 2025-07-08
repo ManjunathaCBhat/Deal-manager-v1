@@ -1,134 +1,181 @@
-import React from 'react';
-import './CompaniesPage.css';
-import {FaEye, FaEdit, FaFilter, FaBell} from 'react-icons/fa';
-
-const companies = [
-  {
-    id: 1,
-    name: 'TechCorp Solutions',
-    website: 'www.techcorp.com',
-    industry: 'Technology',
-    industryColor: 'blue',
-    location: 'San Francisco, CA',
-    contacts: [
-      'https://i.pravatar.cc/32?img=1',
-      'https://i.pravatar.cc/32?img=2',
-      'https://i.pravatar.cc/32?img=3'
-    ],
-    contactNote: '+2 more'
-  },
-  {
-    id: 2,
-    name: 'HealthPlus Medical',
-    website: 'www.healthplus.com',
-    industry: 'Healthcare',
-    industryColor: 'green',
-    location: 'New York, NY',
-    contacts: [
-      'https://i.pravatar.cc/32?img=4',
-      'https://i.pravatar.cc/32?img=5'
-    ],
-    contactNote: '2 contacts'
-  },
-  {
-    id: 3,
-    name: 'Global Finance Group',
-    website: 'www.globalfinance.com',
-    industry: 'Finance',
-    industryColor: 'orange',
-    location: 'London, UK',
-    contacts: [
-      'https://i.pravatar.cc/32?img=6',
-      'https://i.pravatar.cc/32?img=7',
-      'https://i.pravatar.cc/32?img=8'
-    ],
-    contactNote: '+3'
-  }
-];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { FaEye, FaEdit, FaFilter, FaBell } from "react-icons/fa";
+import "./CompaniesPage.css";
 
 const CompaniesPage = () => {
+  const [companies, setCompanies] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchCompanies = async () => {
+    try {
+      const res = await axios.get("/api/companies/");
+      setCompanies(res.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch companies.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
+
+  const filteredCompanies = companies.filter((c) =>
+    c.name?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-      <div className="companies-page">
-        <nav className="top-nav">
-          <div className="nav-left">CRM Project</div>
-          <div className="nav-center">
-            <a href="/dashboard" className="nav-link">Dashboard</a>
-            <a href="/companies" className="nav-link active">Companies</a>
-            <a href="/customers" className="nav-link">Customers</a>
-            <a href="/deals" className="nav-link">Deals</a>
-            <a href="/user-management" className="nav-link">Management</a>
-            <a href="/activity-log" className="nav-link">Activity</a>
-          </div>
-          <div className="nav-right">
-            <FaBell className="nav-icon"/>
-            <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar"/>
-          </div>
-        </nav>
-
-        <h1 className="page-title">Companies</h1>
-        <p className="page-subtitle">Manage your company database</p>
-
-        <div className="companies-controls">
-          <input type="text" placeholder="Search companies..." className="search-bar"/>
-          <FaFilter className="filter-icon"/>
+    <div className="companies-page">
+      {/* Top Nav */}
+      <nav className="top-nav">
+        <div className="nav-left">CRM Project</div>
+        <div className="nav-center">
+          <a href="/dashboard" className="nav-link">Dashboard</a>
+          <a href="/companies" className="nav-link active">Companies</a>
+          <a href="/customers" className="nav-link">Customers</a>
+          <a href="/deals" className="nav-link">Deals</a>
+          <a href="/user-management" className="nav-link">Management</a>
+          <a href="/activity-log" className="nav-link">Activity</a>
         </div>
+        <div className="nav-right">
+          <FaBell className="nav-icon" />
+          <img
+            src="https://i.pravatar.cc/32?img=5"
+            alt="User"
+            className="profile-avatar"
+          />
+        </div>
+      </nav>
 
+      <h1 className="page-title">Companies</h1>
+      <p className="page-subtitle">Manage your company database</p>
+
+      {/* Search */}
+      <div className="companies-controls">
+        <input
+          type="text"
+          placeholder="Search companies..."
+          className="search-bar"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <FaFilter className="filter-icon" />
+      </div>
+
+      {/* Table */}
+      <div className="table-wrapper">
         <table className="companies-table">
           <thead>
-          <tr>
-            <th>Company Name</th>
-            <th>Industry</th>
-            <th>Location</th>
-            <th>Linked Contacts</th>
-            <th>Actions</th>
-          </tr>
+            <tr>
+              <th>Company Name</th>
+              <th>Industry</th>
+              <th>Location</th>
+              <th>Linked Contacts</th>
+              <th>Actions</th>
+            </tr>
           </thead>
           <tbody>
-          {companies.map((company) => (
-              <tr key={company.id}>
-                <td>
-                  <div className="company-info">
-                    <span className="company-icon">🏢</span>
-                    <div>
-                      <strong>{company.name}</strong><br/>
-                      <a href={`https://${company.website}`} target="_blank" rel="noreferrer" className="company-link">
-                        {company.website}
-                      </a>
-                    </div>
-                  </div>
-                </td>
-                <td className={`industry ${company.industryColor.toLowerCase()}`}>{company.industry}</td>
-                <td>{company.location}</td>
-                <td>
-                  <div className="contacts-cell">
-                    {company.contacts.map((c, i) => (
-                        <img key={i} src={c} alt="Contact" className="contact-avatar"/>
-                    ))}
-                    <span className="contact-note">{company.contactNote}</span>
-                  </div>
-                </td>
-                <td>
-                  <div className="action-buttons">
-                    <FaEye className="action-icon"/>
-                    <FaEdit className="action-icon"/>
-                  </div>
-                </td>
+            {loading ? (
+              <tr>
+                <td colSpan="5" className="loading-cell">Loading...</td>
               </tr>
-          ))}
+            ) : error ? (
+              <tr>
+                <td colSpan="5" className="error-cell">{error}</td>
+              </tr>
+            ) : filteredCompanies.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="empty-cell">No companies found.</td>
+              </tr>
+            ) : (
+              filteredCompanies.map((company) => (
+                <tr key={company.id}>
+                  <td>
+                    <div className="company-info">
+                      <span className="company-icon">🏢</span>
+                      <div>
+                        <strong>{company.name || "-"}</strong><br />
+                        {company.website && (
+                          <a
+                            href={
+                              company.website.startsWith("http")
+                                ? company.website
+                                : `https://${company.website}`
+                            }
+                            target="_blank"
+                            rel="noreferrer"
+                            className="company-link"
+                          >
+                            {company.website}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                  <span
+                    className={`industry industry-${company.industry?.toLowerCase() || "default"}`}
+                    style={{ color: company.industry_color || undefined }}
+                  >
+                    {company.industry?.split(' ')
+                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                      .join(' ') || "-"}
+                  </span>
+                  </td>
+                  <td>{company.location || "-"}</td>
+                  <td>
+                    <div className="contacts-cell">
+                      {company.contacts?.length > 0 ? (
+                        <>
+                          {company.contacts.slice(0, 3).map((c, i) => (
+                            <img
+                              key={i}
+                              src={c.avatar_url || `https://i.pravatar.cc/32?img=${i + 1}`}
+                              alt="Contact"
+                              className="contact-avatar"
+                            />
+                          ))}
+                          {company.contacts.length > 3 && (
+                            <span className="contact-note">
+                              +{company.contacts.length - 3} more
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <FaEye className="action-icon" />
+                      <FaEdit className="action-icon" />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
+      </div>
 
-        <div className="pagination">
-          <span>Showing 1 to 3 of 47 companies</span>
-          <div className="page-controls">
-            <span>Previous</span>
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>Next</span>
-          </div>
+      {/* Pagination */}
+      <div className="pagination">
+        <span>Showing {filteredCompanies.length} companies</span>
+        <div className="page-controls">
+          <span>Previous</span>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>Next</span>
         </div>
       </div>
+    </div>
   );
 };
 
