@@ -1,15 +1,15 @@
-from rest_framework import generics
-from .models import Deal, Company, Customer
-from .serializers import DealSerializer, CompanySerializer, CustomerSerializer
+from rest_framework import viewsets
+from .models import Company, Customer, Deal
+from .serializers import CompanySerializer, CustomerSerializer, DealSerializer
 
-class DealListCreate(generics.ListCreateAPIView):
-    queryset = Deal.objects.all()
-    serializer_class = DealSerializer
-
-class CompanyListCreate(generics.ListCreateAPIView):
+class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
 
-class CustomerListCreate(generics.ListCreateAPIView):
+class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+
+class DealViewSet(viewsets.ModelViewSet):
+    queryset = Deal.objects.all()
+    serializer_class = DealSerializer
