@@ -99,6 +99,7 @@
   font-size: 14px;
 }
 
+
 .contact-info {
   display: flex;
   align-items: center;
@@ -112,17 +113,17 @@
 }
 
 .proposal {
-  color: #f97316;
+  color: #f97316 !important;
   font-weight: 600;
 }
 
 .qualified {
-  color: #3b82f6;
+  color: #3b82f6 !important;
   font-weight: 600;
 }
 
 .negotiation {
-  color: #10b981;
+  color: #10b981 !important;
   font-weight: 600;
 }
 

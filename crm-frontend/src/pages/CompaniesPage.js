@@ -118,36 +118,38 @@ const CompaniesPage = () => {
                     </div>
                   </td>
                   <td>
-                  <span
-                    className={`industry industry-${company.industry?.toLowerCase() || "default"}`}
-                    style={{ color: company.industry_color || undefined }}
-                  >
-                    {company.industry?.split(' ')
-                      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                      .join(' ') || "-"}
-                  </span>
+                    <span
+                      className={`industry industry-${company.industry?.toLowerCase() || "default"}`}
+                      style={{ color: company.industry_color || undefined }}
+                    >
+                      {company.industry?.split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ') || "-"}
+                    </span>
                   </td>
                   <td>{company.location || "-"}</td>
                   <td>
-                    <div className="contacts-cell">
-                      {company.contacts?.length > 0 ? (
-                        <>
-                          {company.contacts.slice(0, 3).map((c, i) => (
+                    <div className="contact-info">
+                      {company.customers?.length > 0 ? (
+                        company.customers.map(c => (
+                          <div
+                            key={c.id}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              marginRight: '6px'
+                            }}
+                          >
                             <img
-                              key={i}
-                              src={c.avatar_url || `https://i.pravatar.cc/32?img=${i + 1}`}
-                              alt="Contact"
-                              className="contact-avatar"
+                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                              alt={c.name}
+                              style={{ width: '28px', height: '28px', borderRadius: '50%' }}
                             />
-                          ))}
-                          {company.contacts.length > 3 && (
-                            <span className="contact-note">
-                              +{company.contacts.length - 3} more
-                            </span>
-                          )}
-                        </>
+                            <span style={{ marginLeft: '4px' }}>{c.name}</span>
+                          </div>
+                        ))
                       ) : (
-                        <span className="text-muted">—</span>
+                        <span>—</span>
                       )}
                     </div>
                   </td>
