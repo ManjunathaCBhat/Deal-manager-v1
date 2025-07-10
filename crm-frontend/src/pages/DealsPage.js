@@ -1,51 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './DealsPage.css';
-import { FaMicrophone, FaBell } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-
-const deals = [
-  {
-    name: 'Enterprise Software License',
-    company: 'TechCorp Inc.',
-    value: '$45,000',
-    stage: 'Proposal',
-    stageClass: 'proposal',
-    closeDate: 'Dec 15, 2024',
-    contact: {
-      name: 'John Smith',
-      avatar: 'https://i.pravatar.cc/32?img=1'
-    }
-  },
-  {
-    name: 'Cloud Migration Project',
-    company: 'DataFlow Solutions',
-    value: '$28,500',
-    stage: 'Qualified',
-    stageClass: 'qualified',
-    closeDate: 'Jan 30, 2025',
-    contact: {
-      name: 'Sarah Johnson',
-      avatar: 'https://i.pravatar.cc/32?img=2'
-    }
-  },
-  {
-    name: 'Security Audit Package',
-    company: 'SecureNet Ltd.',
-    value: '$12,000',
-    stage: 'Negotiation',
-    stageClass: 'negotiation',
-    closeDate: 'Dec 22, 2024',
-    contact: {
-      name: 'Mike Chen',
-      avatar: 'https://i.pravatar.cc/32?img=3'
-    }
-  }
-];
+import { FaBell, FaMicrophone } from 'react-icons/fa';
 
 const DealsPage = () => {
+  const [deals, setDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchDeals = async () => {
+    try {
+      const res = await axios.get('/api/deals/');
+      setDeals(res.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch deals.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDeals();
+  }, []);
+
+  const stageClass = (stage) => {
+    switch (stage.toLowerCase()) {
+      case 'proposal': return 'proposal';
+      case 'qualified': return 'qualified';
+      case 'negotiation': return 'negotiation';
+      default: return '';
+    }
+  };
+
+  const stageLabel = (stage) => {
+    return stage.charAt(0).toUpperCase() + stage.slice(1);
+  };
+
   return (
     <div className="deals-page">
-      {/* Navigation Bar */}
       <nav className="top-nav">
         <div className="nav-left">CRM Project</div>
         <div className="nav-center">
@@ -62,10 +55,8 @@ const DealsPage = () => {
         </div>
       </nav>
 
-      {/* Page Header */}
       <h1 className="page-title">Deals <span className="page-subtitle">Pipeline Management</span></h1>
 
-      {/* Deals Table and Voice Creator */}
       <div className="deals-layout">
         <div className="deals-table-section">
           <h3>Active Deals</h3>
@@ -81,25 +72,34 @@ const DealsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {deals.map((deal, index) => (
-                <tr key={index} className="clickable-row">
-                  <td colSpan="6">
-                    <Link to="/deal-details" className="deal-row-link">
-                      <div className="deal-row-content">
-                        <span className="deal-cell">{deal.name}</span>
-                        <span className="deal-cell">{deal.company}</span>
-                        <span className="deal-cell">{deal.value}</span>
-                        <span className={`deal-cell ${deal.stageClass}`}>{deal.stage}</span>
-                        <span className="deal-cell">{deal.closeDate}</span>
-                        <span className="deal-cell contact-info">
-                          <img src={deal.contact.avatar} alt={deal.contact.name} />
-                          <span>{deal.contact.name}</span>
-                        </span>
+              {loading ? (
+                <tr><td colSpan="6">Loading...</td></tr>
+              ) : error ? (
+                <tr><td colSpan="6">{error}</td></tr>
+              ) : deals.length === 0 ? (
+                <tr><td colSpan="6">No deals found.</td></tr>
+              ) : (
+                deals.map((deal) => (
+                  <tr key={deal.id}>
+                    <td>{deal.title}</td>
+                    <td>{deal.company_name}</td>
+                    <td>${parseFloat(deal.amount).toLocaleString()}</td>
+                    <td className={`${stageClass(deal.stage)} stage-cell`}>{stageLabel(deal.stage)}</td>
+                    <td>{deal.close_date}</td>
+                    <td>
+                      <div className="contact-info">
+                        {deal.contacts.map(c => (
+                          <div key={c.id} style={{ display: 'inline-flex', alignItems: 'center', marginRight: '6px' }}>
+                            <img src={c.avatar_url} alt={c.name} />
+                            <span style={{ marginLeft: '4px' }}>{c.name}</span>
+                          </div>
+                        ))}
+                        {deal.contacts.length === 0 && <span>—</span>}
                       </div>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -110,30 +110,6 @@ const DealsPage = () => {
             <p className="subtext">Speak to create deals instantly</p>
             <p className="voice-instruction">Click to start recording</p>
             <p className="voice-preview">Your spoken words will appear here...</p>
-          </div>
-
-          <div className="deal-preview">
-            <h4>Deal Preview</h4>
-            <div className="preview-field">
-              <label>Deal Name</label>
-              <p className="preview-placeholder">Auto-extracted deal name</p>
-            </div>
-            <div className="preview-field">
-              <label>Company</label>
-              <p className="preview-placeholder">Company name</p>
-            </div>
-            <div className="preview-field">
-              <label>Deal Value</label>
-              <p className="preview-placeholder">$0</p>
-            </div>
-            <div className="preview-field">
-              <label>Close Date</label>
-              <p className="preview-placeholder">Expected close date</p>
-            </div>
-            <div className="preview-field">
-              <label>Assigned Sales Rep</label>
-              <p className="preview-placeholder">—</p>
-            </div>
           </div>
         </div>
       </div>
