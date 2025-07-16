@@ -6,12 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="47b47bb0-d39f-4a88-8c88-61e3ce98482e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crm-frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/crm-frontend/src/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crm-frontend/src/pages/DashboardPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/crm-frontend/src/pages/DashboardPage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crm-frontend/src/pages/DealDetailsPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/crm-frontend/src/pages/DealDetailsPage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crm-frontend/src/pages/DealDetailsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/crm-frontend/src/pages/DealDetailsPage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crm-frontend/src/pages/DealsPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/crm-frontend/src/pages/DealsPage.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crm-frontend/src/pages/DealsPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/crm-frontend/src/pages/DealsPage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +32,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/crm-frontend/src/pages/DashboardPage.js</url>
-          <line>151</line>
+          <line>175</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
@@ -51,6 +47,12 @@
           <line>116</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/crm-frontend/src/pages/DealDetailsPage.js</url>
+          <line>2</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

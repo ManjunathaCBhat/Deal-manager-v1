@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './DashboardPage.css';
 import {
@@ -8,7 +9,10 @@ import {
   FaDollarSign,
   FaBell,
   FaUserCircle,
-  FaEdit
+  FaEdit,
+  FaEye,
+  FaEnvelope,
+  FaPhone
 } from 'react-icons/fa';
 
 function DashboardPage() {
@@ -41,13 +45,22 @@ function DashboardPage() {
     switch (stage.toLowerCase()) {
       case 'proposal': return 'blue';
       case 'negotiation': return 'orange';
-      case 'qualification': return 'red';
+      case 'qualified': return 'red';
       case 'closing': return 'green';
       case 'discovery': return 'purple';
       default: return '';
     }
   };
 
+  const stageLabel = (stage) => {
+    return stage.charAt(0).toUpperCase() + stage.slice(1);
+  };
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return '-';
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    return match ? `(${match[1]}) ${match[2]}-${match[3]}` : phone;
+  };
   return (
     <div className="dashboard-page">
       {/* Navigation Bar */}
@@ -63,7 +76,11 @@ function DashboardPage() {
         </div>
         <div className="nav-right">
           <FaBell className="nav-icon" />
-          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+            alt="Default Avatar"
+            className="default-avatar"
+          />
         </div>
       </nav>
 
@@ -73,10 +90,10 @@ function DashboardPage() {
 
       {/* KPIs */}
       <div className="kpi-grid">
-        <KpiCard icon={<FaHandshake />} value={totalDeals} label="Total Deals" growth="+12% from last month" />
-        <KpiCard icon={<FaBuilding />} value={totalCompanies} label="Active Companies" growth="+8% from last month" />
-        <KpiCard icon={<FaUserPlus />} value={totalContacts} label="New Contacts" growth="+23% from last month" />
-        <KpiCard icon={<FaDollarSign />} value={`$${pipelineValue.toLocaleString()}`} label="Pipeline Value" growth="+18% from last month" />
+        <KpiCard icon={<FaHandshake />} value={totalDeals} label="Total Deals" />
+        <KpiCard icon={<FaBuilding />} value={totalCompanies} label="Active Companies" />
+        <KpiCard icon={<FaUserPlus />} value={totalContacts} label="New Contacts" />
+        <KpiCard icon={<FaDollarSign />} value={`$${pipelineValue.toLocaleString()}`} label="Pipeline Value" />
       </div>
 
       {/* Active Deals */}
@@ -105,25 +122,28 @@ function DashboardPage() {
           ) : deals.length === 0 ? (
             <tr><td colSpan="7">No deals available.</td></tr>
           ) : (
-            deals.map((deal) => (
-              <tr key={deal.id}>
-                <td>{deal.title}</td>
-                <td>{deal.company_name}</td>
-                <td>${parseFloat(deal.amount).toLocaleString()}</td>
-                <td className={`stage ${stageColor(deal.stage)}`}>{deal.stage}</td>
-                <td>
-                  {deal.contacts.length > 0 ? deal.contacts.map(c => (
-                    <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <img src={c.avatar_url} alt={c.name} style={{ width: 24, height: 24, borderRadius: '50%' }} />
-                      {c.name}
-                    </div>
-                  )) : '—'}
-                </td>
-                <td>{deal.close_date || '—'}</td>
-                <td className="action-icon">
-                  <FaEdit />
-                </td>
-              </tr>
+            deals.slice(0, 6).map((deal) => (
+                <tr key={deal.id}>
+                  <td>{deal.title}</td>
+                  <td>{deal.company_name}</td>
+                  <td>${parseFloat(deal.amount).toLocaleString()}</td>
+                  <td className={`stage ${stageColor(deal.stage)}`}>{stageLabel(deal.stage)}</td>
+                  <td>
+                    {deal.contacts.length > 0 ? deal.contacts.map(c => (
+                        <div key={c.id} style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
+                          <img src={c.avatar_url} alt={c.name} style={{width: 24, height: 24, borderRadius: '50%'}}/>
+                          {c.name}
+                        </div>
+                    )) : '—'}
+                  </td>
+                  <td>{deal.close_date || '—'}</td>
+                  <td className="action-icon">
+                    <Link to={`/deal-details/${deal.id}`}>
+                      <FaEye style={{cursor: 'pointer'}}/>
+                    </Link>
+                  </td>
+
+                </tr>
             ))
           )}
         </tbody>
@@ -135,13 +155,20 @@ function DashboardPage() {
           <h3>Recent Customers</h3>
           <a href="/customers">View All</a>
         </div>
-        {customers.slice(0, 3).map((c) => (
+        {customers.slice(0, 4).map((c) => (
           <div key={c.id} className="customer-row">
             <div className="customer-left">
-                <img src={`https://i.pravatar.cc/40?u=${c.email}`} alt={c.name} className="customer-avatar"/>
-                <div className="customer-info">
-                    <strong>{c.name}</strong>
-                    <p>{c.email}</p>
+              <img
+                src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                alt="Default Avatar"
+                className="default-avatar"
+              />
+              <div className="customer-info">
+                <strong>{c.name}</strong>
+                <p>
+                  <FaEnvelope className="icon"/> {c.email}&nbsp;&nbsp;&nbsp;&nbsp;
+                  <FaPhone className="icon"/> {formatPhoneNumber(c.phone_number)}
+                </p>
               </div>
             </div>
             <span className="customer-amount">New Contact</span>

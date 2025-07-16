@@ -93,7 +93,7 @@ const CustomersPage = () => {
                         <strong>{c.name}</strong>
                         <div className="meta">{c.position || '-'}</div>
                         <div className="meta">
-                          <FaEnvelope className="icon"/> {c.email} &nbsp;
+                          <FaEnvelope className="icon"/> {c.email} &nbsp;&nbsp;
                           <FaPhone className="icon"/> {formatPhoneNumber(c.phone_number)}
                         </div>
                       </div>
