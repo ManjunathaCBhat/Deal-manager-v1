@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './DealsPage.css';
 import { FaBell, FaMicrophone } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const VoiceDealCreator = () => {
   const [listening, setListening] = useState(false);
@@ -139,7 +140,12 @@ const DealsPage = () => {
               ) : (
                 deals.map((deal) => (
                   <tr key={deal.id}>
-                    <td>{deal.title}</td>
+                    <td>
+                      <Link to={`/deal-details/${deal.id}`} className="deal-link">
+                        {deal.title}
+                      </Link>
+                    </td>
+
                     <td>{deal.company_name}</td>
                     <td>${parseFloat(deal.amount).toLocaleString()}</td>
                     <td className={`${stageClass(deal.stage)} stage-cell`}>{stageLabel(deal.stage)}</td>

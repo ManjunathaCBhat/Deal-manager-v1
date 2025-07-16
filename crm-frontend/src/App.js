@@ -19,7 +19,7 @@ function App() {
         <Route path="/user-management" element={<UserManagementPage />} />
         <Route path="/companies" element={<CompaniesPage />} />
         <Route path="/deals" element={<DealsPage />} />
-        <Route path="/deal-details" element={<DealDetailsPage />} />
+        <Route path="/deal-details/:id" element={<DealDetailsPage />} />
         <Route path="/customers" element={<CustomersPage />} />
       </Routes>
     </Router>

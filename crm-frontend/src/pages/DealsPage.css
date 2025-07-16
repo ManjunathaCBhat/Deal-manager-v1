@@ -220,3 +220,16 @@
   display: flex;
   align-items: center;
 }
+
+.clickable-row .deal-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.clickable-row .deal-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  cursor: pointer;
+}

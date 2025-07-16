@@ -1,50 +1,74 @@
+/* src/pages/DealDetailsPage.css */
+
 .deal-details-page {
-  font-family: 'Inter', sans-serif;
-  padding: 40px 60px;
-  background: #f9fafb;
+  padding: 32px;
+  font-family: Arial, sans-serif;
+  color: #374151;
 }
 
 .deal-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 24px;
   margin-bottom: 32px;
 }
 
-.deal-status.negotiation {
-  color: #10b981;
-  font-weight: 700;
-  font-size: 18px;
-  margin-top: 6px;
+.deal-header h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
 }
+
+.deal-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 12px;
+  text-transform: capitalize;
+}
+
+.deal-status.proposal { background-color: #3b82f6; }
+.deal-status.negotiation { background-color: #f97316; }
+.deal-status.qualification { background-color: #ef4444; }
+.deal-status.closing { background-color: #10b981; }
+.deal-status.discovery { background-color: #8b5cf6; }
 
 .assigned-rep {
   display: flex;
-  gap: 10px;
   align-items: center;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
-.assigned-rep img {
+.default-avatar {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  margin-right: 10px;
 }
 
 .deal-meta {
   text-align: right;
 }
 
+.deal-meta h2 {
+  font-size: 26px;
+  color: #10b981;
+  margin-bottom: 8px;
+}
+
 .deal-meta a {
-  display: block;
-  margin-top: 10px;
+  font-size: 14px;
   color: #2563eb;
   text-decoration: none;
 }
 
 .deal-sections {
   display: flex;
-  gap: 40px;
+  gap: 32px;
 }
 
 .deal-left {
@@ -56,24 +80,36 @@
 }
 
 section {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
   margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-.tasks ul, .timeline ul {
-  list-style: none;
-  padding: 0;
-}
-
-.upload-btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 12px;
+.company-contact .contact-block {
+  background: #f9fafb;
+  padding: 12px;
   margin-top: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.customer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-top: 8px;
+}
+
+.tasks ul,
+.timeline ul {
+  list-style: disc;
+  padding-left: 20px;
+  color: #4b5563;
+}
+
+.task-input {
+  padding: 8px;
+  width: 100%;
+  margin-top: 10px;
   border-radius: 5px;
-  cursor: pointer;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
 }
