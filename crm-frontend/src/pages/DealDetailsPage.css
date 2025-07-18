@@ -1,115 +1,131 @@
-/* src/pages/DealDetailsPage.css */
-
 .deal-details-page {
-  padding: 32px;
-  font-family: Arial, sans-serif;
+  padding: 40px 60px;
+  font-family: 'Inter', sans-serif;
+  background-color: #f9fafb;
   color: #374151;
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.nav-link {
+  color: #6b7280;
+  margin: 0 8px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-link.active {
+  color: #2563eb;
+}
+
+.deal-header-row {
+  margin-top: 20px;
+}
+
+.back-link {
+  color: #6b7280;
+  font-size: 14px;
+  text-decoration: none;
 }
 
 .deal-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 24px;
-  margin-bottom: 32px;
-}
-
-.deal-header h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.deal-status {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 12px;
-  text-transform: capitalize;
-}
-
-.deal-status.proposal { background-color: #3b82f6; }
-.deal-status.negotiation { background-color: #f97316; }
-.deal-status.qualification { background-color: #ef4444; }
-.deal-status.closing { background-color: #10b981; }
-.deal-status.discovery { background-color: #8b5cf6; }
-
-.assigned-rep {
-  display: flex;
   align-items: center;
-  margin-top: 10px;
-}
-
-.default-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  margin-right: 10px;
+  margin: 20px 0;
 }
 
 .deal-meta {
-  text-align: right;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.deal-meta h2 {
-  font-size: 26px;
+.deal-stage {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%; /* make it a circle */
+  display: inline-block;
+}
+
+.deal-stage-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deal-stage-text {
+  font-size: 24px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.stage-proposal { background-color: #f97316; }
+.stage-qualified { background-color: #3b82f6; }
+.stage-negotiation { background-color: #10b981; }
+
+.deal-amount {
   color: #10b981;
-  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 45px;
 }
 
-.deal-meta a {
-  font-size: 14px;
+.edit-link {
   color: #2563eb;
+  font-size: 14px;
   text-decoration: none;
 }
 
-.deal-sections {
+.deal-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin: 20px 0;
+}
+
+.company-name {
+  color: #2563eb;
+  font-weight: 500;
+  font-size: 25px;
+}
+
+.contact-info {
   display: flex;
-  gap: 32px;
-}
-
-.deal-left {
-  flex: 2;
-}
-
-.deal-right {
-  flex: 1;
-}
-
-section {
-  margin-bottom: 24px;
-}
-
-.company-contact .contact-block {
-  background: #f9fafb;
-  padding: 12px;
-  margin-top: 12px;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-}
-
-.customer-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  align-items: flex-start;
+  gap: 12px;
   margin-top: 8px;
 }
 
-.tasks ul,
-.timeline ul {
-  list-style: disc;
-  padding-left: 20px;
-  color: #4b5563;
+.contact-info img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 
-.task-input {
-  padding: 8px;
-  width: 100%;
-  margin-top: 10px;
-  border-radius: 5px;
-  border: 1px solid #d1d5db;
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   font-size: 14px;
+}
+
+.contact-details a {
+  color: #374151;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.contact-details a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.expected-close {
+  margin-top: 20px;
 }

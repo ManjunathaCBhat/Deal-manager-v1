@@ -113,14 +113,47 @@
 
 .contact-info {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 300px;
 }
 
-.contact-info img {
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70px;
+  margin-bottom: 8px;
+  word-wrap: break-word;
+}
+
+.contact-card img {
   width: 28px;
   height: 28px;
   border-radius: 50%;
+}
+
+.contact-name {
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.contact-links {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.contact-links a {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.contact-links a:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
 }
 
 .action-buttons {
@@ -144,39 +177,4 @@
 .page-controls {
   display: flex;
   gap: 8px;
-}
-
-button {
-  background-color: #2563eb;
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #1d4ed8;
-}
-
-.add-company-form {
-  margin: 20px 0;
-  display: flex;
-  gap: 10px;
-}
-
-.add-company-form input {
-  padding: 6px 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.add-company-form button {
-  padding: 6px 12px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
 }
