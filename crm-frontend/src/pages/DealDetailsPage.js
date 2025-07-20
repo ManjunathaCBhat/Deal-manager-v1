@@ -1,100 +1,123 @@
-import React from 'react';
-import './DealDetailsPage.css';
-import { FaDownload, FaBell } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
+import "./DealDetailsPage.css";
+import { FaBell, FaPhone, FaEnvelope } from "react-icons/fa";
 
 const DealDetailsPage = () => {
+  const { id } = useParams();
+  const [deal, setDeal] = useState(null);
+
+  useEffect(() => {
+    const fetchDeal = async () => {
+      try {
+        const response = await axios.get(`/api/deals/${id}/`);
+        setDeal(response.data);
+        console.log("Fetched deal:", response.data);
+      } catch (err) {
+        console.error("Failed to fetch deal", err);
+      }
+    };
+    fetchDeal();
+  }, [id]);
+
+  if (!deal) {
+    console.log("No deal yet:", deal);
+    return <div>Loading...</div>;
+  }
+
+  const formatPhone = (phone) => {
+    if (!phone) return "N/A";
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length === 10) {
+      return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    }
+    return phone;
+  };
+
+  const stageColorClass = (stage) => {
+    switch (stage.toLowerCase()) {
+      case "proposal":
+        return "stage-proposal";
+      case "qualified":
+        return "stage-qualified";
+      case "negotiation":
+        return "stage-negotiation";
+      default:
+        return "";
+    }
+  };
+
   return (
-      <div className="deal-details-page">
-        {/* Top Nav */}
-        <nav className="top-nav">
-          <div className="nav-left">CRM Project</div>
-          <div className="nav-center">
-            <a href="/dashboard" className="nav-link active">Dashboard</a>
-            <a href="/companies" className="nav-link">Companies</a>
-            <a href="/customers" className="nav-link">Customers</a>
-            <a href="/deals" className="nav-link">Deals</a>
-            <a href="/user-management" className="nav-link">Management</a>
-            <a href="/activity-log" className="nav-link">Activity</a>
-          </div>
-          <div className="nav-right">
-            <FaBell className="nav-icon"/>
-            <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar"/>
-          </div>
-        </nav>
-
-        {/* Header */}
-        <div className="deal-header">
-          <div>
-            <h1>Enterprise Software License</h1>
-            <p className="deal-status negotiation">$45,000</p>
-            <div className="assigned-rep">
-              <img src="https://i.pravatar.cc/40?img=4" alt="Michael Chen"/>
-              <span>Michael Chen<br/><small>Senior Sales Rep</small></span>
-            </div>
-          </div>
-          <div className="deal-meta">
-            <span>Expected Close</span>
-            <strong>Dec 15, 2024</strong>
-            <a href="/edit">✏️ Edit Deal</a>
-          </div>
+    <div className="deal-details-page">
+      <nav className="top-nav">
+        <div className="nav-left">CRM Project</div>
+        <div className="nav-center">
+          <Link to="/dashboard" className="nav-link">Dashboard</Link>
+          <Link to="/companies" className="nav-link">Companies</Link>
+          <Link to="/customers" className="nav-link">Customers</Link>
+          <Link to="/deals" className="nav-link active">Deals</Link>
+          <Link to="/user-management" className="nav-link">Management</Link>
+          <Link to="/activity-log" className="nav-link">Activity</Link>
         </div>
+        <div className="nav-right">
+          <FaBell className="nav-icon" />
+          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
+        </div>
+      </nav>
 
-        {/* Main Sections */}
-        <div className="deal-sections">
-          {/* Left Panel */}
-          <div className="deal-left">
-            <section className="company-contact">
-              <h3>Company & Contact Information</h3>
-              <p><strong>Company:</strong> TechCorp Solutions</p>
-              <p>Software Development<br/>500–1000 employees</p>
-              <p><strong>Primary Contact:</strong> Sarah Johnson</p>
-              <p>CTO<br/>+1 (555) 123-4567<br/>sarah.johnson@techcorp.com</p>
-            </section>
+      <div className="deal-header-row">
+        <Link to="/deals" className="back-link">&larr; Back to Deals</Link>
+      </div>
 
-            <section className="timeline">
-              <h3>Timeline & Activity</h3>
-              <ul>
-                <li><strong>Discovery Call Completed</strong> — 2 hours ago<br/><small>Michael Chen confirmed $125K
-                  budget.</small></li>
-                <li><strong>Proposal Sent</strong> — Yesterday<br/><small>Custom integrations sent for review.</small>
-                </li>
-                <li><strong>Demo Scheduled</strong> — 3 days ago<br/><small>Scheduled for Dec 10th at 2PM.</small></li>
-              </ul>
-            </section>
-
-            <section className="details">
-              <h3>Deal Details</h3>
-              <p><strong>Source:</strong> Website Inquiry</p>
-              <p><strong>Priority:</strong> High</p>
-              <p><strong>Service:</strong> Enterprise Software License</p>
-              <p><strong>Probability:</strong> 75%</p>
-              <p><strong>Notes:</strong> Budget approved. Decision expected end of Q4.</p>
-            </section>
+      <div className="deal-header">
+        <h1>{deal.title}</h1>
+        <div className="deal-meta">
+          <div className="deal-stage-container">
+            <span className={`deal-stage ${stageColorClass(deal.stage)}`}></span>
+            <span className="deal-stage-text">{deal.stage.charAt(0).toUpperCase() + deal.stage.slice(1)}</span>
           </div>
-
-          {/* Right Panel */}
-          <div className="deal-right">
-            <section className="tasks">
-              <h3>Tasks & Reminders</h3>
-              <ul>
-                <li>🔴 Follow up on proposal — <small>Due: Today</small></li>
-                <li>📄 Prepare contract documents — <small>Due: Dec 12</small></li>
-                <li style={{textDecoration: 'line-through', color: '#9ca3af'}}>🎥 Send demo recording — Completed</li>
-              </ul>
-            </section>
-
-            <section className="files">
-              <h3>Files</h3>
-              <ul>
-                <li><FaDownload/> Proposal_TechCorp.pdf (2.3MB)</li>
-                <li><FaDownload/> Contract_Draft.docx (1.8MB)</li>
-                <li><FaDownload/> Product_Demo.png (4.1MB)</li>
-              </ul>
-              <button className="upload-btn">Upload File</button>
-            </section>
-          </div>
+          <span className="deal-amount">${parseFloat(deal.amount).toLocaleString()}</span>
+          <Link to={`/deals/edit/${deal.id}`} className="edit-link">Edit Deal</Link>
         </div>
       </div>
+
+      <div className="deal-info-grid">
+        <div>
+          <h3>Company</h3>
+          <p className="company-name">{deal.company_name}</p>
+        </div>
+        <div>
+          <h3>Primary Contact</h3>
+          {deal.contacts?.length > 0 ? (
+            <div className="contact-info">
+              <img src={deal.contacts[0].avatar_url} alt={deal.contacts[0].name} />
+              <div className="contact-details">
+                <strong>{deal.contacts[0].name}</strong>
+                <span>{deal.contacts[0].position || "N/A"}</span>
+                {deal.contacts[0].phone_number && (
+                  <a href={`tel:${deal.contacts[0].phone_number}`}>
+                    <FaPhone /> {formatPhone(deal.contacts[0].phone_number)}
+                  </a>
+                )}
+                {deal.contacts[0].email && (
+                  <a href={`mailto:${deal.contacts[0].email}`}>
+                    <FaEnvelope /> {deal.contacts[0].email}
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p>No contact assigned</p>
+          )}
+        </div>
+      </div>
+
+      <div className="expected-close">
+        <h3>Expected Close</h3>
+        <p>{deal.close_date}</p>
+      </div>
+    </div>
   );
 };
 

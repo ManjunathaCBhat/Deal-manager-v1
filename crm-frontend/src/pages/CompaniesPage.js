@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaEdit, FaFilter, FaBell } from "react-icons/fa";
+import { FaEye, FaEdit, FaFilter, FaBell, FaEnvelope, FaPhone } from "react-icons/fa";
 import "./CompaniesPage.css";
 
 const CompaniesPage = () => {
@@ -132,20 +132,24 @@ const CompaniesPage = () => {
                     <div className="contact-info">
                       {company.customers?.length > 0 ? (
                         company.customers.map(c => (
-                          <div
-                            key={c.id}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              marginRight: '6px'
-                            }}
-                          >
+                          <div key={c.id} className="contact-card">
                             <img
                               src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
                               alt={c.name}
-                              style={{ width: '28px', height: '28px', borderRadius: '50%' }}
                             />
-                            <span style={{ marginLeft: '4px' }}>{c.name}</span>
+                            <span className="contact-name">{c.name}</span>
+                            <div className="contact-links">
+                              {c.email && (
+                                <a href={`mailto:${c.email}`} title={c.email}>
+                                  <FaEnvelope />
+                                </a>
+                              )}
+                              {c.phone_number && (
+                                <a href={`tel:${c.phone_number}`} title={c.phone_number}>
+                                  <FaPhone />
+                                </a>
+                              )}
+                            </div>
                           </div>
                         ))
                       ) : (

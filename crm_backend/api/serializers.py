@@ -53,9 +53,7 @@ class DealSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Deal
-        fields = [
-            'id', 'title', 'amount', 'stage', 'close_date', 'company', 'company_name', 'contacts'
-        ]
+        fields = '__all__'
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -63,7 +61,10 @@ class DealSerializer(serializers.ModelSerializer):
             {
                 'id': c.id,
                 'name': c.name,
-                'avatar_url': MUSTAFA_AVATAR_URL
+                'email': c.email,
+                'phone_number': c.phone_number,
+                'avatar_url': MUSTAFA_AVATAR_URL,
+                'position': c.position,
             }
             for c in instance.contacts.all()
         ]

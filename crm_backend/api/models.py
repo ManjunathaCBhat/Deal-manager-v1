@@ -40,6 +40,11 @@ class Company(models.Model):
         return mapping.get(self.industry, 'default')
 
 
+    class Meta:
+        verbose_name_plural = "Companies"
+
+
+
 class Customer(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField()

@@ -151,3 +151,12 @@
   margin-right: 4px;
 }
 
+.customer-info .contact-link {
+  color: #6b7280;
+  text-decoration: none;
+  margin-right: 8px;
+}
+
+.customer-info .contact-link:hover {
+  text-decoration: underline;
+}

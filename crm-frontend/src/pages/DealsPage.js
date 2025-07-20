@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './DealsPage.css';
-import { FaBell, FaMicrophone } from 'react-icons/fa';
+import { FaBell, FaMicrophone, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const VoiceDealCreator = () => {
   const [listening, setListening] = useState(false);
@@ -139,17 +140,36 @@ const DealsPage = () => {
               ) : (
                 deals.map((deal) => (
                   <tr key={deal.id}>
-                    <td>{deal.title}</td>
+                    <td>
+                      <Link to={`/deal-details/${deal.id}`} className="deal-link">
+                        {deal.title}
+                      </Link>
+                    </td>
+
                     <td>{deal.company_name}</td>
                     <td>${parseFloat(deal.amount).toLocaleString()}</td>
                     <td className={`${stageClass(deal.stage)} stage-cell`}>{stageLabel(deal.stage)}</td>
                     <td>{deal.close_date}</td>
                     <td>
-                      <div className="contact-info">
+                      <div className="deal-contact-info">
                         {deal.contacts.map(c => (
-                          <div key={c.id} style={{ display: 'inline-flex', alignItems: 'center', marginRight: '6px' }}>
-                            <img src={c.avatar_url} alt={c.name} />
-                            <span style={{ marginLeft: '4px' }}>{c.name}</span>
+                          <div key={c.id} className="deal-contact">
+                            <img src={c.avatar_url} alt={c.name} className="contact-avatar" />
+                            <div className="contact-details">
+                              <span className="contact-name">{c.name}</span>
+                              <div className="contact-icons">
+                                {c.email && (
+                                  <a href={`mailto:${c.email}`} title={`Email ${c.name}`}>
+                                    <FaEnvelope />
+                                  </a>
+                                )}
+                                {c.phone_number && (
+                                  <a href={`tel:${c.phone_number}`} title={`Call ${c.name}`}>
+                                    <FaPhone />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         ))}
                         {deal.contacts.length === 0 && <span>—</span>}
