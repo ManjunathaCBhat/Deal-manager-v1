@@ -51,18 +51,21 @@ const CustomersPage = () => {
         </div>
         <div className="nav-right">
           <FaBell className="nav-icon" />
-          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
-        </div>
+            <img
+                src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                alt="Default Avatar"
+                className="profile-avatar"
+            /></div>
       </nav>
 
-      <h1 className="page-title">Customers</h1>
-      <p className="page-subtitle">Manage your customer database</p>
+        <h1 className="page-title">Customers</h1>
+        <p className="page-subtitle">Manage your customer database</p>
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search customers..."
-        className="search-bar"
+        {/* Search */}
+        <input
+            type="text"
+            placeholder="Search customers..."
+            className="search-bar"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />

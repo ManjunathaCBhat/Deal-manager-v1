@@ -1,65 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './ActivityLogPage.css';
 import { FaFilter, FaDownload, FaBell } from 'react-icons/fa';
 
-const activities = [
-  {
-    typeIcon: '🟢',
-    type: 'Created Customer',
-    userImage: 'https://randomuser.me/api/portraits/men/1.jpg',
-    userName: 'John Smith',
-    action: 'Create',
-    actionClass: 'action-create',
-    target: 'Customer "John Doe"',
-    time: 'Today at 3:32 PM'
-  },
-  {
-    typeIcon: '🔧',
-    type: 'Updated Deal',
-    userImage: 'https://randomuser.me/api/portraits/men/2.jpg',
-    userName: 'Alex Rodriguez',
-    action: 'Update',
-    actionClass: 'action-update',
-    target: 'Deal "#4312 – Website Redesign"',
-    time: 'Today at 2:08 PM'
-  },
-  {
-    typeIcon: '🗑️',
-    type: 'Deleted Company',
-    userImage: 'https://randomuser.me/api/portraits/men/3.jpg',
-    userName: 'Mike Davis',
-    action: 'Delete',
-    actionClass: 'action-delete',
-    target: 'Company "GreenTech Ltd."',
-    time: 'Yesterday at 6:10 PM'
-  },
-  {
-    typeIcon: '👁️',
-    type: 'Viewed Report',
-    userImage: 'https://randomuser.me/api/portraits/men/4.jpg',
-    userName: 'Mike Chen',
-    action: 'View',
-    actionClass: 'action-view',
-    target: 'Report "Q2 Pipeline Summary"',
-    time: 'June 22, 2025 – 10:45 AM'
-  },
-  {
-    typeIcon: '🟢',
-    type: 'Created Company',
-    userImage: 'https://randomuser.me/api/portraits/men/5.jpg',
-    userName: 'Jake Crittens',
-    action: 'Create',
-    actionClass: 'action-create',
-    target: 'Company "Tesla Inc."',
-    time: 'June 22, 2025 – 9:15 AM'
-  },
-];
+const ITEMS_PER_PAGE = 20;
+
+const mapActionType = (action) => {
+  if (action === "Addition") return "Create";
+  if (action === "Change") return "Edit";
+  if (action === "Deletion") return "Delete";
+  return action;
+};
 
 const ActivityLogPage = () => {
+  const [activities, setActivities] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    fetch('/api/activity-log/')
+      .then(res => res.json())
+      .then(data => setActivities(data))
+      .catch(err => console.error('Error loading activity log:', err));
+  }, []);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentActivities = activities.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const totalPages = Math.ceil(activities.length / ITEMS_PER_PAGE);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+  };
+
   return (
     <div className="activity-log-container">
-
-      {/* ✅ Navigation Bar */}
       <nav className="top-nav">
         <div className="nav-left">CRM Project</div>
         <div className="nav-center">
@@ -71,17 +48,22 @@ const ActivityLogPage = () => {
           <a href="/activity-log" className="nav-link active">Activity</a>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon" />
-          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
+          <FaBell className="nav-icon"/>
+          <img
+              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+              alt="Default Avatar"
+              className="profile-avatar"
+          />
+
+
         </div>
       </nav>
 
-      {/* Header */}
       <div className="activity-log-header">
         <h1>Activity Log</h1>
         <div className="activity-actions">
-          <button><FaFilter size={14} /> Filter</button>
-          <button><FaDownload size={14} /> Export</button>
+          <button><FaFilter size={14}/> Filter</button>
+          <button><FaDownload size={14}/> Export</button>
         </div>
       </div>
 
@@ -89,12 +71,11 @@ const ActivityLogPage = () => {
         Track all system activities and user actions
       </div>
 
-      {/* Table */}
       <div className="activity-table-wrapper">
         <table className="activity-table">
           <thead>
             <tr>
-              <th>Activity</th>
+              <th>Model</th>
               <th>User</th>
               <th>Action</th>
               <th>Target</th>
@@ -102,42 +83,40 @@ const ActivityLogPage = () => {
             </tr>
           </thead>
           <tbody>
-            {activities.map((activity, index) => (
-              <tr key={index}>
+            {currentActivities.map((activity) => (
+              <tr key={activity.id}>
                 <td>
-                  <div className="activity-type">
-                    <span className="activity-icon">{activity.typeIcon}</span>
-                    <span>{activity.type}</span>
-                  </div>
+                  {activity.model
+                    ? activity.model.charAt(0).toUpperCase() + activity.model.slice(1)
+                    : '—'}
                 </td>
                 <td>
                   <div className="activity-user">
-                    <img src={activity.userImage} alt={activity.userName} />
-                    <span>{activity.userName}</span>
+                    <img
+                      src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                      alt="Default Avatar"
+                      className="default-avatar"
+                    />
+                    <span>{activity.user || '—'}</span>
                   </div>
                 </td>
                 <td>
-                  <span className={activity.actionClass}>{activity.action}</span>
+                  <span className={`action-${mapActionType(activity.action_type || '').toLowerCase()}`}>
+                    {mapActionType(activity.action_type || '')}
+                  </span>
                 </td>
-                <td>
-                  <span className="target-text">{activity.target}</span>
-                </td>
-                <td>
-                  <span className="date-time">{activity.time}</span>
-                </td>
+                <td>{activity.object_repr || '—'}</td>
+                <td>{activity.action_time || '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="activity-table-pagination">
-        <span>Previous</span>
-        <span>1</span>
-        <span className="current-page">2</span>
-        <span>3</span>
-        <span>Next</span>
+        <button onClick={handlePrev} disabled={currentPage === 1}>Previous</button>
+        <span className="current-page">{currentPage}</span>
+        <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
       </div>
     </div>
   );

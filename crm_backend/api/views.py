@@ -6,6 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from openai import OpenAI
 from datetime import datetime
+from django.contrib.admin.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
+from django.utils.timezone import localtime
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -51,4 +56,53 @@ class VoiceDealView(APIView):
         )
 
         return Response({"message": "Deal created", "deal_id": deal.id}, status=status.HTTP_201_CREATED)
+
+class AdminRecentActionsAPIView(APIView):
+    def get(self, request):
+        log_entries = LogEntry.objects.select_related('user', 'content_type').order_by('-action_time')[:20]
+        data = []
+        for entry in log_entries:
+            data.append({
+                "id": entry.id,
+                "user": entry.user.get_full_name() or entry.user.username,
+                "user_avatar": f"https://i.pravatar.cc/150?img={entry.user.id % 70 + 1}",
+                "action_type": entry.get_action_flag_display(),
+                "object_repr": entry.object_repr,
+                "model": entry.content_type.model.capitalize(),
+                "action_time": localtime(entry.action_time).strftime('%B %d, %Y – %I:%M %p')
+            })
+        return Response(data, status=status.HTTP_200_OK)
+
+class ActivityLogView(APIView):
+    def get(self, request):
+        page = int(request.query_params.get("page", 1))  # Get ?page= from URL, default to 1
+        logs = LogEntry.objects.select_related('user', 'content_type').order_by('-action_time')
+
+        paginator = Paginator(logs, 20)  # 20 entries per page
+        page_obj = paginator.get_page(page)
+
+        def get_action_label(flag):
+            return {
+                1: "Create",
+                2: "Edit",
+                3: "Delete"
+            }.get(flag, "Unknown")
+
+        data = []
+        for entry in page_obj.object_list:
+            data.append({
+                "user": entry.user.get_full_name() or entry.user.username,
+                "model": entry.content_type.model.capitalize(),
+                "object_repr": entry.object_repr,
+                "action": get_action_label(entry.action_flag),
+                "time": entry.action_time.strftime("%b %d, %Y – %I:%M %p")
+            })
+
+        return Response({
+            "results": data,
+            "has_next": page_obj.has_next(),
+            "has_previous": page_obj.has_previous(),
+            "current_page": page,
+            "total_pages": paginator.num_pages
+        }, status=status.HTTP_200_OK)
 

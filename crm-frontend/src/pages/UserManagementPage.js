@@ -45,8 +45,11 @@ const UserManagementPage = () => {
         </div>
         <div className="nav-right">
           <FaBell className="nav-icon" />
-          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
-        </div>
+          <img
+              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+              alt="Default Avatar"
+              className="profile-avatar"
+          /></div>
       </nav>
 
       {/* Page Header */}
@@ -57,7 +60,7 @@ const UserManagementPage = () => {
 
       {/* Filters */}
       <div className="user-filters">
-        <select>
+      <select>
           <option>All Roles</option>
           <option>Admin</option>
           <option>User</option>

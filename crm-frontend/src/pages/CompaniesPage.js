@@ -43,11 +43,11 @@ const CompaniesPage = () => {
           <a href="/activity-log" className="nav-link">Activity</a>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon" />
+          <FaBell className="nav-icon"/>
           <img
-            src="https://i.pravatar.cc/32?img=5"
-            alt="User"
-            className="profile-avatar"
+              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+              alt="Default Avatar"
+              className="profile-avatar"
           />
         </div>
       </nav>
@@ -58,8 +58,8 @@ const CompaniesPage = () => {
       {/* Search */}
       <div className="companies-controls">
         <input
-          type="text"
-          placeholder="Search companies..."
+            type="text"
+            placeholder="Search companies..."
           className="search-bar"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

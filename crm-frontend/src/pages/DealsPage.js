@@ -66,6 +66,8 @@ const DealsPage = () => {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+
 
   const fetchDeals = async () => {
     try {
@@ -109,9 +111,12 @@ const DealsPage = () => {
           <a href="/activity-log" className="nav-link">Activity</a>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon" />
-          <img src="https://i.pravatar.cc/32?img=5" alt="User" className="profile-avatar" />
-        </div>
+          <FaBell className="nav-icon"/>
+          <img
+              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+              alt="Default Avatar"
+              className="profile-avatar"
+          /></div>
       </nav>
 
       <h1 className="page-title">Deals <span className="page-subtitle">Pipeline Management</span></h1>
@@ -119,71 +124,98 @@ const DealsPage = () => {
       <div className="deals-layout">
         <div className="deals-table-section">
           <h3>Active Deals</h3>
+          <input
+              type="text"
+              placeholder="Search deals..."
+              className="search-bar"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                marginBottom: '16px',
+                padding: '8px',
+                width: '100%',
+                maxWidth: '300px',
+                borderRadius: '6px',
+                border: '1px solid #ccc'
+              }}
+          />
+
           <table className="deals-table">
             <thead>
-              <tr>
-                <th>Deal Name</th>
-                <th>Company</th>
-                <th>Value</th>
-                <th>Stage</th>
-                <th>Close Date</th>
-                <th>Contacts</th>
-              </tr>
+            <tr>
+              <th>Deal Name</th>
+              <th>Company</th>
+              <th>Value</th>
+              <th>Stage</th>
+              <th>Close Date</th>
+              <th>Contacts</th>
+            </tr>
             </thead>
             <tbody>
-              {loading ? (
-                <tr><td colSpan="6">Loading...</td></tr>
-              ) : error ? (
-                <tr><td colSpan="6">{error}</td></tr>
-              ) : deals.length === 0 ? (
-                <tr><td colSpan="6">No deals found.</td></tr>
-              ) : (
-                deals.map((deal) => (
-                  <tr key={deal.id}>
-                    <td>
-                      <Link to={`/deal-details/${deal.id}`} className="deal-link">
-                        {deal.title}
-                      </Link>
-                    </td>
+            {loading ? (
+                <tr>
+                  <td colSpan="6">Loading...</td>
+                </tr>
+            ) : error ? (
+                <tr>
+                  <td colSpan="6">{error}</td>
+                </tr>
+            ) : deals.length === 0 ? (
+                <tr>
+                  <td colSpan="6">No deals found.</td>
+                </tr>
+            ) : (
+                deals
+                  .filter(deal =>
+                    deal.title.toLowerCase().includes(search.toLowerCase())
+                  )
+                  .map((deal) => (
 
-                    <td>{deal.company_name}</td>
-                    <td>${parseFloat(deal.amount).toLocaleString()}</td>
-                    <td className={`${stageClass(deal.stage)} stage-cell`}>{stageLabel(deal.stage)}</td>
-                    <td>{deal.close_date}</td>
-                    <td>
-                      <div className="deal-contact-info">
-                        {deal.contacts.map(c => (
-                          <div key={c.id} className="deal-contact">
-                            <img src={c.avatar_url} alt={c.name} className="contact-avatar" />
-                            <div className="contact-details">
-                              <span className="contact-name">{c.name}</span>
-                              <div className="contact-icons">
-                                {c.email && (
-                                  <a href={`mailto:${c.email}`} title={`Email ${c.name}`}>
-                                    <FaEnvelope />
-                                  </a>
-                                )}
-                                {c.phone_number && (
-                                  <a href={`tel:${c.phone_number}`} title={`Call ${c.name}`}>
-                                    <FaPhone />
-                                  </a>
-                                )}
+                    <tr key={deal.id}>
+                      <td>
+                        <Link to={`/deal-details/${deal.id}`} className="deal-link">
+                          {deal.title}
+                        </Link>
+                      </td>
+
+                      <td>{deal.company_name}</td>
+                      <td>${parseFloat(deal.amount).toLocaleString()}</td>
+                      <td className={`${stageClass(deal.stage)} stage-cell`}>{stageLabel(deal.stage)}</td>
+                      <td>{deal.close_date}</td>
+                      <td>
+                        <div className="deal-contact-info">
+                          {deal.contacts.map(c => (
+                              <div key={c.id} className="deal-contact">
+                                <img src={c.avatar_url} alt={c.name} className="contact-avatar"/>
+                                <div className="contact-details">
+                                  <span className="contact-name">{c.name}</span>
+                                  <div className="contact-icons">
+                                    {c.email && (
+                                        <a href={`mailto:${c.email}`} title={`Email ${c.name}`}>
+                                          <FaEnvelope/>
+                                        </a>
+                                    )}
+                                    {c.phone_number && (
+                                        <a href={`tel:${c.phone_number}`} title={`Call ${c.name}`}>
+                                          <FaPhone/>
+                                        </a>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        ))}
-                        {deal.contacts.length === 0 && <span>—</span>}
-                      </div>
-                    </td>
-                  </tr>
+                          ))}
+                          {deal.contacts.length === 0 && <span>—</span>}
+                        </div>
+                      </td>
+                    </tr>
                 ))
-              )}
+            )}
             </tbody>
           </table>
         </div>
 
         <div className="deals-sidebar">
-          <VoiceDealCreator />
+          <VoiceDealCreator/>
         </div>
       </div>
     </div>
