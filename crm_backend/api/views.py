@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.timezone import localtime
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -106,3 +107,19 @@ class ActivityLogView(APIView):
             "total_pages": paginator.num_pages
         }, status=status.HTTP_200_OK)
 
+class RegisterView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        email = request.data.get("email")
+        password = request.data.get("password")
+
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists"}, status=400)
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "refresh": str(refresh),
+            "access": str(refresh.access_token)
+        }, status=status.HTTP_201_CREATED)
