@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './CustomersPage.css';
 import { FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
 import axios from 'axios';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const formatPhoneNumber = (phone) => {
   if (!phone) return '-';
@@ -16,6 +18,12 @@ const CustomersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   const fetchCustomers = async () => {
     try {
       const res = await axios.get('/api/customers/');
@@ -50,24 +58,26 @@ const CustomersPage = () => {
           <a href="/activity-log" className="nav-link">Activity</a>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon" />
-            <img
-                src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                alt="Default Avatar"
-                className="profile-avatar"
-            /></div>
+          <FaBell className="nav-icon"/>
+          <img
+              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+              alt="Default Avatar"
+              className="profile-avatar"
+          />
+          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
+        </div>
       </nav>
 
-        <h1 className="page-title">Customers</h1>
-        <p className="page-subtitle">Manage your customer database</p>
+      <h1 className="page-title">Customers</h1>
+      <p className="page-subtitle">Manage your customer database</p>
 
-        {/* Search */}
-        <input
-            type="text"
-            placeholder="Search customers..."
-            className="search-bar"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
+      {/* Search */}
+      <input
+          type="text"
+          placeholder="Search customers..."
+          className="search-bar"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
       />
 
       <div className="customer-table-header">

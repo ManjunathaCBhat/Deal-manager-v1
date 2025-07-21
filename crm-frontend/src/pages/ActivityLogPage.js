@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './ActivityLogPage.css';
 import { FaFilter, FaDownload, FaBell } from 'react-icons/fa';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -15,6 +17,14 @@ const ActivityLogPage = () => {
   const [activities, setActivities] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   useEffect(() => {
     fetch('/api/activity-log/')
       .then(res => res.json())
@@ -24,7 +34,6 @@ const ActivityLogPage = () => {
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentActivities = activities.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
   const totalPages = Math.ceil(activities.length / ITEMS_PER_PAGE);
 
   const handlePrev = () => {
@@ -37,6 +46,7 @@ const ActivityLogPage = () => {
 
   return (
     <div className="activity-log-container">
+      {/* Nav Bar */}
       <nav className="top-nav">
         <div className="nav-left">CRM Project</div>
         <div className="nav-center">
@@ -48,22 +58,21 @@ const ActivityLogPage = () => {
           <a href="/activity-log" className="nav-link active">Activity</a>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon"/>
+          <FaBell className="nav-icon" />
           <img
-              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-              alt="Default Avatar"
-              className="profile-avatar"
+            src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+            alt="Default Avatar"
+            className="profile-avatar"
           />
-
-
+          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
         </div>
       </nav>
 
       <div className="activity-log-header">
         <h1>Activity Log</h1>
         <div className="activity-actions">
-          <button><FaFilter size={14}/> Filter</button>
-          <button><FaDownload size={14}/> Export</button>
+          <button><FaFilter size={14} /> Filter</button>
+          <button><FaDownload size={14} /> Export</button>
         </div>
       </div>
 
@@ -85,11 +94,7 @@ const ActivityLogPage = () => {
           <tbody>
             {currentActivities.map((activity) => (
               <tr key={activity.id}>
-                <td>
-                  {activity.model
-                    ? activity.model.charAt(0).toUpperCase() + activity.model.slice(1)
-                    : '—'}
-                </td>
+                <td>{activity.model ? activity.model.charAt(0).toUpperCase() + activity.model.slice(1) : '—'}</td>
                 <td>
                   <div className="activity-user">
                     <img

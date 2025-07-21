@@ -3,6 +3,8 @@ import axios from 'axios';
 import './DealsPage.css';
 import { FaBell, FaMicrophone, FaEnvelope, FaPhone } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const VoiceDealCreator = () => {
   const [listening, setListening] = useState(false);
@@ -68,6 +70,13 @@ const DealsPage = () => {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const fetchDeals = async () => {
     try {
@@ -116,7 +125,9 @@ const DealsPage = () => {
               src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
               alt="Default Avatar"
               className="profile-avatar"
-          /></div>
+          />
+          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
+        </div>
       </nav>
 
       <h1 className="page-title">Deals <span className="page-subtitle">Pipeline Management</span></h1>

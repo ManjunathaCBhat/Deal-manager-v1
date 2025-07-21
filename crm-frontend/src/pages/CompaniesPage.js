@@ -2,12 +2,23 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEye, FaEdit, FaFilter, FaBell, FaEnvelope, FaPhone } from "react-icons/fa";
 import "./CompaniesPage.css";
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const CompaniesPage = () => {
   const [companies, setCompanies] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const fetchCompanies = async () => {
     try {
@@ -49,6 +60,7 @@ const CompaniesPage = () => {
               alt="Default Avatar"
               className="profile-avatar"
           />
+          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
         </div>
       </nav>
 
@@ -60,9 +72,9 @@ const CompaniesPage = () => {
         <input
             type="text"
             placeholder="Search companies..."
-          className="search-bar"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+            className="search-bar"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
         />
         <FaFilter className="filter-icon" />
       </div>

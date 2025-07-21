@@ -3,10 +3,19 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import "./DealDetailsPage.css";
 import { FaBell, FaPhone, FaEnvelope } from "react-icons/fa";
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const DealDetailsPage = () => {
   const { id } = useParams();
   const [deal, setDeal] = useState(null);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   useEffect(() => {
     const fetchDeal = async () => {
@@ -61,12 +70,14 @@ const DealDetailsPage = () => {
           <Link to="/activity-log" className="nav-link">Activity</Link>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon" />
+          <FaBell className="nav-icon"/>
           <img
               src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
               alt="Default Avatar"
               className="profile-avatar"
-          /></div>
+          />
+          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
+        </div>
       </nav>
 
       <div className="deal-header-row">

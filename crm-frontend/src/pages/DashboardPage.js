@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import {
   FaHandshake,
@@ -61,6 +63,15 @@ function DashboardPage() {
     const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
     return match ? `(${match[1]}) ${match[2]}-${match[3]}` : phone;
   };
+
+  const { logout } = useAuth();
+const navigate = useNavigate();
+
+const handleLogout = () => {
+  logout();
+  navigate('/');
+};
+
   return (
       <div className="dashboard-page">
         {/* Navigation Bar */}
@@ -81,6 +92,9 @@ function DashboardPage() {
                 alt="Default Avatar"
                 className="profile-avatar"
             />
+            <button className="logout-btn" onClick={handleLogout}>
+              Sign Out
+            </button>
           </div>
         </nav>
 

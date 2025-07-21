@@ -1,6 +1,8 @@
 import React from 'react';
 import './UserManagementPage.css';
 import { FaEdit, FaTrash, FaUserSlash, FaBell } from 'react-icons/fa';
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const users = [
   {
@@ -30,6 +32,14 @@ const users = [
 ];
 
 const UserManagementPage = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div className="user-management-page">
       {/* Nav Bar */}
@@ -46,10 +56,14 @@ const UserManagementPage = () => {
         <div className="nav-right">
           <FaBell className="nav-icon" />
           <img
-              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-              alt="Default Avatar"
-              className="profile-avatar"
-          /></div>
+            src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+            alt="Default Avatar"
+            className="profile-avatar"
+          />
+          <button className="logout-btn" onClick={handleLogout}>
+            Sign Out
+          </button>
+        </div>
       </nav>
 
       {/* Page Header */}
@@ -60,7 +74,7 @@ const UserManagementPage = () => {
 
       {/* Filters */}
       <div className="user-filters">
-      <select>
+        <select>
           <option>All Roles</option>
           <option>Admin</option>
           <option>User</option>
