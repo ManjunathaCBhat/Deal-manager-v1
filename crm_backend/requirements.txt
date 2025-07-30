@@ -228,7 +228,7 @@ ply @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/ply_169924
 prometheus-client @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/prometheus_client_1699249452887/work
 prompt-toolkit @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_4d8kk9w3ed/croot/prompt-toolkit_1704404354789/work
 Protego @ file:///tmp/build/80754af9/protego_1598657180827/work
-protobuf==3.20.3
+protobuf==4.25.8
 psutil @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/psutil_1699246686105/work
 psycopg2-binary==2.9.10
 ptyprocess @ file:///tmp/build/80754af9/ptyprocess_1609355006118/work/dist/ptyprocess-0.7.0-py2.py3-none-any.whl
