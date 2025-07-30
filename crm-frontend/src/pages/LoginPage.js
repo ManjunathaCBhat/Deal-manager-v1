@@ -1,57 +1,90 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login, setAuthToken } from '../auth/auth';
+import { useAuth } from '../auth/AuthContext';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
 import './LoginPage.css';
-import { FaGoogle, FaGithub, FaEnvelope, FaLock, FaEye } from 'react-icons/fa';
 
 function LoginPage() {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [rememberMe, setRememberMe] = useState(false);
+  const { login: loginContext } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await login(form);
+      const token = res.data.access;
+      if (rememberMe) localStorage.setItem('token', token);
+      loginContext(token);
+      setAuthToken(token);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Invalid email or password');
+    }
+  };
+
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Welcome back</h2>
-        <p>Sign in to your account to continue</p>
+    <div className="auth-container">
+      <form className="auth-box" onSubmit={handleSubmit}>
+        <h2 className="welcome-title">Welcome to CRM Portal</h2>
+        <img
+          src="https://www.cirruslabs.io/hubfs/Cirruslabs-Assets-20/Images/Cirruslabs-Logo%20for%20Website.jpg"
+          alt="Cirrus Labs"
+          className="logo"
+        />
+        <h3 className="portal-title">CRM Portal</h3>
+        <p className="portal-subtitle">Sign in to manage and protect</p>
 
-        <form>
-          <div className="input-group">
-            <label>Email address</label>
-            <div className="input-with-icon">
-              <FaEnvelope className="input-icon" />
-              <input type="email" placeholder="Enter your email" />
-            </div>
-          </div>
+        <div className="input-group">
+          <FaEnvelope className="input-icon" />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          <div className="input-group">
-            <label>Password</label>
-            <div className="input-with-icon">
-              <FaLock className="input-icon" />
-              <input type="password" placeholder="Enter your password" />
-              <FaEye className="input-icon eye-icon" />
-            </div>
-          </div>
+        <div className="input-group">
+          <FaLock className="input-icon" />
+          <input
+            type="password"
+            name="password"
+            placeholder="Create Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-          <div className="options-row">
-            <label>
-              <input type="checkbox" /> Remember me
-            </label>
-            <a href="/">Forgot password?</a>
-          </div>
+        <div className="remember-me">
+          <label>
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />{' '}
+            Remember me
+          </label>
+        </div>
 
-          <button type="submit" className="sign-in-btn">Sign in</button>
+        <button type="submit" className="submit-btn">
+          Sign in
+        </button>
 
-          <div className="divider">or</div>
+        {error && <p className="error-text">{error}</p>}
 
-          <div className="social-buttons">
-            <button type="button" className="social-btn">
-              <FaGoogle className="social-icon google" /> Google
-            </button>
-            <button type="button" className="social-btn">
-              <FaGithub className="social-icon github" /> GitHub
-            </button>
-          </div>
-
-          <p className="signup-text">
-            Don’t have an account? <a href="/">Sign up</a>
-          </p>
-        </form>
-      </div>
+        <p className="switch-text">
+          Don’t have an account? <a href="/register">Create Account</a>
+        </p>
+      </form>
     </div>
   );
 }

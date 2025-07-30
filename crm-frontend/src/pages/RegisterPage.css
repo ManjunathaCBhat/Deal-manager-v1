@@ -1,0 +1,88 @@
+.register-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.register-card {
+  text-align: center;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  max-width: 400px;
+  width: 100%;
+}
+
+.cirrus-logo {
+  height: 30px;
+  margin: 10px auto;
+}
+
+.crm-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.login-heading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.login-subheading {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  font-size: 14px;
+}
+
+.form-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #6b7280;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.auth-btn:hover {
+  background-color: #1e40af;
+}
+
+.alt-link {
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.alt-link a {
+  color: #1e3a8a;
+  font-weight: 500;
+  text-decoration: none;
+}

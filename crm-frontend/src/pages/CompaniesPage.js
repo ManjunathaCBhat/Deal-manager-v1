@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaEdit, FaFilter, FaBell } from "react-icons/fa";
+import { FaEye, FaEdit, FaFilter, FaBell, FaEnvelope, FaPhone } from "react-icons/fa";
 import "./CompaniesPage.css";
+import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const CompaniesPage = () => {
   const [companies, setCompanies] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const fetchCompanies = async () => {
     try {
@@ -43,12 +54,13 @@ const CompaniesPage = () => {
           <a href="/activity-log" className="nav-link">Activity</a>
         </div>
         <div className="nav-right">
-          <FaBell className="nav-icon" />
+          <FaBell className="nav-icon"/>
           <img
-            src="https://i.pravatar.cc/32?img=5"
-            alt="User"
-            className="profile-avatar"
+              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+              alt="Default Avatar"
+              className="profile-avatar"
           />
+          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
         </div>
       </nav>
 
@@ -58,11 +70,11 @@ const CompaniesPage = () => {
       {/* Search */}
       <div className="companies-controls">
         <input
-          type="text"
-          placeholder="Search companies..."
-          className="search-bar"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Search companies..."
+            className="search-bar"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
         />
         <FaFilter className="filter-icon" />
       </div>
@@ -132,20 +144,24 @@ const CompaniesPage = () => {
                     <div className="contact-info">
                       {company.customers?.length > 0 ? (
                         company.customers.map(c => (
-                          <div
-                            key={c.id}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              marginRight: '6px'
-                            }}
-                          >
+                          <div key={c.id} className="contact-card">
                             <img
                               src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
                               alt={c.name}
-                              style={{ width: '28px', height: '28px', borderRadius: '50%' }}
                             />
-                            <span style={{ marginLeft: '4px' }}>{c.name}</span>
+                            <span className="contact-name">{c.name}</span>
+                            <div className="contact-links">
+                              {c.email && (
+                                <a href={`mailto:${c.email}`} title={c.email}>
+                                  <FaEnvelope />
+                                </a>
+                              )}
+                              {c.phone_number && (
+                                <a href={`tel:${c.phone_number}`} title={c.phone_number}>
+                                  <FaPhone />
+                                </a>
+                              )}
+                            </div>
                           </div>
                         ))
                       ) : (

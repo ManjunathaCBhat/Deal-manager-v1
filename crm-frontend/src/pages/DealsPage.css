@@ -97,19 +97,8 @@
   padding: 14px;
   border-bottom: 1px solid #e5e7eb;
   font-size: 14px;
-}
-
-
-.contact-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.contact-info img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 .proposal {
@@ -126,97 +115,94 @@
   color: #10b981 !important;
   font-weight: 600;
 }
-
-.voice-deal {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.voice-deal h4 {
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 6px 0;
-}
-
-.subtext {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.voice-instruction {
-  margin-top: 12px;
-  color: #374151;
-  font-size: 14px;
-}
-
-.voice-preview {
-  font-size: 13px;
-  color: #9ca3af;
-  margin-top: 6px;
-}
-
-.deal-preview {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.deal-preview h4 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.preview-field {
-  margin-bottom: 10px;
-}
-
-.preview-field label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #6b7280;
-  display: block;
-}
-
-.preview-placeholder {
-  font-size: 14px;
-  color: #9ca3af;
-  margin-top: 2px;
-}
-
-
 .clickable-row {
   cursor: pointer;
 }
 
-.deal-row-link {
+.clickable-row .deal-link {
+  color: #2563eb;
   text-decoration: none;
-  color: inherit;
-  display: block;
-  width: 100%;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
-.deal-row-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;
-  align-items: center;
+.clickable-row .deal-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* contact info styling */
+.deal-contact-info {
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
-  padding: 12px 0;
+  align-items: center;
 }
 
-.deal-cell img {
+.deal-contact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contact-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  margin-right: 6px;
 }
 
-.contact-info {
+.contact-details {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  font-size: 12px;
+  color: #374151;
+}
+
+.contact-name {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.contact-icons {
+  display: flex;
+  gap: 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.contact-icons a {
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.contact-icons a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.deal-link,
+.deal-link:visited,
+.deal-link:active {
+  color: #2563eb; /* Tailwind's blue-600 */
+  text-decoration: none;
+}
+
+.deal-link:hover {
+  text-decoration: underline;
+}
+
+.logout-btn {
+  margin-left: 12px;
+  padding: 6px 12px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
 }
