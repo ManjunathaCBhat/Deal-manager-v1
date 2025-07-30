@@ -1,116 +1,88 @@
-.register-container {
+.register-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #ffffff;
+  background: #fff;
 }
 
-.register-box {
+.register-card {
   text-align: center;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  max-width: 400px;
   width: 100%;
-  max-width: 360px;
 }
 
-.register-box h2 {
-  font-size: 30px;
-  font-weight: 700;
-  margin-bottom: 8px;
+.cirrus-logo {
+  height: 30px;
+  margin: 10px auto;
 }
 
-.register-box p {
+.crm-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.login-heading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.login-subheading {
   font-size: 14px;
-  color: #6b7280;
+  color: #4b5563;
   margin-bottom: 24px;
 }
 
-.input-group {
-  text-align: left;
+.form-group {
+  position: relative;
   margin-bottom: 16px;
 }
 
-.input-group label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.input-with-icon {
-  position: relative;
-}
-
-.input-with-icon input {
-  width: 79.5%;
-  padding: 10px 36px 10px 36px;
-  border: 1px solid #e5e7eb;
+.form-group input {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
   border-radius: 6px;
+  border: 1px solid #d1d5db;
   background-color: #f9fafb;
   font-size: 14px;
 }
 
-.input-icon {
+.form-icon {
   position: absolute;
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: #6b7280;
 }
 
-.register-btn {
+.auth-btn {
   width: 100%;
   padding: 10px;
-  background-color: #4f46e5;
+  background-color: #1e3a8a;
   color: white;
   border: none;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  margin-bottom: 16px;
+  margin-top: 12px;
 }
 
-.divider {
-  color: #9ca3af;
-  margin-bottom: 16px;
+.auth-btn:hover {
+  background-color: #1e40af;
 }
 
-.social-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.social-btn {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.social-icon {
-  margin-right: 8px;
-  font-size: 16px;
-}
-
-.social-icon.google {
-  color: #db4437;
-}
-
-.social-icon.github {
-  color: #333;
-}
-
-.login-text {
+.alt-link {
+  margin-top: 16px;
   font-size: 13px;
 }
 
-.login-text a {
-  color: #2563eb;
-  text-decoration: none;
+.alt-link a {
+  color: #1e3a8a;
   font-weight: 500;
+  text-decoration: none;
 }

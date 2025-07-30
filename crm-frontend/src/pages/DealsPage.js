@@ -1,68 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './DealsPage.css';
-import { FaBell, FaMicrophone, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaBell, FaEnvelope, FaPhone } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
-const VoiceDealCreator = () => {
-  const [listening, setListening] = useState(false);
-  const [preview, setPreview] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const startListening = () => {
-    setListening(true);
-    setError("");
-    setSuccess("");
-    setPreview("Listening...");
-
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onresult = async (event) => {
-      const transcript = event.results[0][0].transcript;
-      setPreview(`You said: "${transcript}"`);
-      setListening(false);
-
-      try {
-        await axios.post("/api/voice-deal/", { transcript });
-        setSuccess("✅ Deal created successfully!");
-      } catch (err) {
-        console.error(err);
-        setError("❌ Failed to create deal.");
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error(event.error);
-      setError("❌ Speech recognition error.");
-      setListening(false);
-    };
-
-    recognition.start();
-  };
-
-  return (
-    <div className="voice-deal">
-      <h4><FaMicrophone /> AI Voice Deal Creator</h4>
-      <p className="subtext">Speak to create deals instantly</p>
-      <button
-        onClick={startListening}
-        disabled={listening}
-        style={{ marginTop: "10px" }}
-      >
-        {listening ? "Listening..." : "Click to start recording"}
-      </button>
-      <p className="voice-preview">{preview}</p>
-      {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
-    </div>
-  );
-};
+import DealAssistant from '../components/DealAssistant';
 
 const DealsPage = () => {
   const [deals, setDeals] = useState([]);
@@ -226,7 +169,7 @@ const DealsPage = () => {
         </div>
 
         <div className="deals-sidebar">
-          <VoiceDealCreator/>
+          <DealAssistant/>
         </div>
       </div>
     </div>

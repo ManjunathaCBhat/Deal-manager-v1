@@ -11,6 +11,12 @@ export const AuthProvider = ({ children }) => {
     return token ? { token } : null;
   });
 
+  useEffect(() => {
+    if (user?.token) {
+      setAuthToken(user.token);
+    }
+  }, [user]);
+
   const login = (token) => {
     localStorage.setItem('token', token);
     setAuthToken(token);

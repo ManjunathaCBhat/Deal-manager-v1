@@ -84,14 +84,14 @@
   background: #f3f4f6;
   color: #374151;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .companies-table td {
   padding: 14px;
   border-bottom: 1px solid #e5e7eb;
   text-align: left;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .company-info {
@@ -101,13 +101,17 @@
 }
 
 .company-link {
-  font-size: 12px;
+  font-size: 14px;
   color: #2563eb;
   text-decoration: none;
 }
 
+.company-link:hover {
+  text-decoration: underline;
+}
+
 .industry {
-  font-size: 14px;
+  font-size: 18px !important;
   font-weight: 800;
 }
 

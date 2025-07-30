@@ -185,8 +185,21 @@ const handleLogout = () => {
                   <div className="customer-info">
                     <strong>{c.name}</strong>
                     <p>
-                      <FaEnvelope className="icon"/> {c.email}&nbsp;&nbsp;&nbsp;&nbsp;
-                      <FaPhone className="icon"/> {formatPhoneNumber(c.phone_number)}
+                      <FaEnvelope className="icon"/>
+                      <a
+                        href={`mailto:${c.email}`}
+                        className="contact-link"
+                      >
+                        {c.email}
+                      </a>
+                      &nbsp;&nbsp;&nbsp;&nbsp;
+                      <FaPhone className="icon"/>
+                      <a
+                        href={`tel:${c.phone_number}`}
+                        className="contact-link"
+                      >
+                        {formatPhoneNumber(c.phone_number)}
+                      </a>
                     </p>
                   </div>
                 </div>

@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 export const login = (credentials) =>
-  axios.post('/api/auth/token/', credentials);  // JWT endpoint
+  axios.post('/api/token/', credentials);
+  // JWT endpoint
 
 export const register = (details) =>
   axios.post('/api/register/', details);  // Create this in your Django backend if needed

@@ -115,40 +115,6 @@
   color: #10b981 !important;
   font-weight: 600;
 }
-
-.voice-deal {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.voice-deal h4 {
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 6px 0;
-}
-
-.subtext {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.voice-instruction {
-  margin-top: 12px;
-  color: #374151;
-  font-size: 14px;
-}
-
-.voice-preview {
-  font-size: 13px;
-  color: #9ca3af;
-  margin-top: 6px;
-}
-
 .clickable-row {
   cursor: pointer;
 }
