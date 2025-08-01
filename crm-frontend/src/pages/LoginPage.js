@@ -6,7 +6,7 @@ import { FaEnvelope, FaLock } from 'react-icons/fa';
 import './LoginPage.css';
 
 function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ username: '', password: '' });
   const [rememberMe, setRememberMe] = useState(false);
   const { login: loginContext } = useAuth();
   const navigate = useNavigate();
@@ -37,16 +37,15 @@ function LoginPage() {
           alt="Cirrus Labs"
           className="logo"
         />
-        <h3 className="portal-title">CRM Portal</h3>
-        <p className="portal-subtitle">Sign in to manage and protect</p>
+        <p className="portal-subtitle">Sign in to Manage and Protect</p>
 
         <div className="input-group">
           <FaEnvelope className="input-icon" />
           <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            value={form.email}
+            type="text"
+            name="username"
+            placeholder="Your Username or Email"
+            value={form.username}
             onChange={handleChange}
             required
           />

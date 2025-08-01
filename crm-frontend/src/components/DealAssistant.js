@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './DealAssistant.css';
 import { FaMicrophone } from 'react-icons/fa';
 import axios from 'axios';
-import { useEffect, useRef } from 'react';
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+}
 
 const DealAssistant = () => {
   const [messages, setMessages] = useState([
@@ -17,60 +26,53 @@ const DealAssistant = () => {
     handleAIResponse(text);
   };
 
-   const handleAIResponse = async (userInput) => {
-     const trimmed = userInput.trim();
+  const handleAIResponse = async (userInput) => {
+    const trimmed = userInput.trim();
 
-     if (!deal.title) {
-       setDeal({ ...deal, title: trimmed });
-       setMessages((prev) => [...prev, { sender: 'ai', text: "Great! Which company is this deal with?" }]);
-     }
-     else if (!deal.company) {
-       try {
-         // Convert company name to ID via backend
-         const res = await axios.get(`/api/companies/?search=${trimmed}`);
-         const company = res.data.find(c => c.name.toLowerCase() === trimmed.toLowerCase());
+    if (!deal.title) {
+      setDeal({ ...deal, title: trimmed });
+      setMessages((prev) => [...prev, { sender: 'ai', text: "Great! Which company is this deal with?" }]);
+    } else if (!deal.company) {
+      try {
+        const res = await axios.get(`/api/companies/?search=${trimmed}`);
+        const company = res.data.find(c => c.name.toLowerCase() === trimmed.toLowerCase());
 
-         if (company) {
-           setDeal({ ...deal, company: company.id });
-           setMessages((prev) => [...prev, { sender: 'ai', text: "What's the deal value (in dollars)?" }]);
-         } else {
-           setMessages((prev) => [...prev, { sender: 'ai', text: "❌ I couldn't find that company. Please try again." }]);
-         }
-       } catch (err) {
-         setMessages((prev) => [...prev, { sender: 'ai', text: "❌ Error looking up company." }]);
-       }
-     }
-     else if (!deal.amount) {
-       const amount = parseFloat(trimmed.replace(/[^0-9.]/g, ''));
-       setDeal({ ...deal, amount });
-       setMessages((prev) => [...prev, { sender: 'ai', text: "What stage is the deal in? (e.g., proposal, qualified)" }]);
-     }
-     else if (!deal.stage) {
-       setDeal({ ...deal, stage: trimmed });
-       setMessages((prev) => [...prev, { sender: 'ai', text: "When is the expected close date? (YYYY-MM-DD)" }]);
-     }
-     else if (!deal.close_date) {
-       setDeal({ ...deal, close_date: trimmed });
-       setMessages((prev) => [...prev, { sender: 'ai', text: "Do you want to associate any contacts? Type comma-separated contact IDs (or leave blank)." }]);
+        if (company) {
+          setDeal({ ...deal, company: company.id });
+          setMessages((prev) => [...prev, { sender: 'ai', text: "What's the deal value (in dollars)?" }]);
+        } else {
+          setMessages((prev) => [...prev, { sender: 'ai', text: "❌ I couldn't find that company. Please try again." }]);
+        }
+      } catch (err) {
+        setMessages((prev) => [...prev, { sender: 'ai', text: "❌ Error looking up company." }]);
       }
-     else if (!deal.contacts) {
-       const contactIds = trimmed
-         ? trimmed.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n))
-         : [];
-       const fullDeal = { ...deal, contacts: contactIds };
+    } else if (!deal.amount) {
+      const amount = parseFloat(trimmed.replace(/[^0-9.]/g, ''));
+      setDeal({ ...deal, amount });
+      setMessages((prev) => [...prev, { sender: 'ai', text: "What stage is the deal in? (e.g., proposal, qualified)" }]);
+    } else if (!deal.stage) {
+      setDeal({ ...deal, stage: trimmed });
+      setMessages((prev) => [...prev, { sender: 'ai', text: "When is the expected close date? (YYYY-MM-DD)" }]);
+    } else if (!deal.close_date) {
+      setDeal({ ...deal, close_date: trimmed });
+      setMessages((prev) => [...prev, { sender: 'ai', text: "Do you want to associate any contacts? Type comma-separated contact IDs (or leave blank)." }]);
+    } else if (!deal.contacts) {
+      const contactIds = trimmed
+        ? trimmed.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n))
+        : [];
+      const fullDeal = { ...deal, contacts: contactIds };
 
-       setMessages((prev) => [...prev, { sender: 'ai', text: "Creating your deal..." }]);
+      setMessages((prev) => [...prev, { sender: 'ai', text: "Creating your deal..." }]);
 
-       try {
-         await axios.post('/api/deals/', fullDeal);
-         setMessages((prev) => [...prev, { sender: 'ai', text: "✅ Deal created successfully!" }]);
-         setDeal({}); // Reset
-       } catch (err) {
-         setMessages((prev) => [...prev, { sender: 'ai', text: "❌ Failed to create deal." }]);
-       }
-     }
-   };
-
+      try {
+        await axios.post('/api/deals/', fullDeal);
+        setMessages((prev) => [...prev, { sender: 'ai', text: "✅ Deal created successfully!" }]);
+        setDeal({}); // Reset
+      } catch (err) {
+        setMessages((prev) => [...prev, { sender: 'ai', text: "❌ Failed to create deal." }]);
+      }
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,18 +82,40 @@ const DealAssistant = () => {
     }
   };
 
+  const handleMicClick = () => {
+    if (!recognition) return;
+    if (listening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  };
+
+  useEffect(() => {
+    if (!recognition) return;
+
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      sendMessage(transcript);
+    };
+  }, []);
+
   const messagesEndRef = useRef(null);
-  useEffect(() => {messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });}, [messages]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="deal-assistant">
       <h4><FaMicrophone /> AI Deal Assistant</h4>
-       <div className="chat-window">
-         {messages.map((msg, idx) => (
-           <div key={idx} className={`message ${msg.sender}`}>{msg.text}</div>
-         ))}
-         <div ref={messagesEndRef} />
-       </div>
+      <div className="chat-window">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`message ${msg.sender}`}>{msg.text}</div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
       <form onSubmit={handleSubmit} className="chat-input">
         <input
           type="text"
@@ -100,6 +124,14 @@ const DealAssistant = () => {
           placeholder="Type your response..."
         />
         <button type="submit">Send</button>
+        <button
+          type="button"
+          onClick={handleMicClick}
+          className={listening ? "mic-btn listening" : "mic-btn"}
+          title={listening ? "Listening..." : "Start voice input"}
+        >
+          <FaMicrophone />
+        </button>
       </form>
     </div>
   );
