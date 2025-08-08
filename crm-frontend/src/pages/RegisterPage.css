@@ -1,88 +1,133 @@
-.register-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #fff;
+@import '../styles/auth-theme.css';
+
+.auth-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
 
-.register-card {
-  text-align: center;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-  max-width: 400px;
-  width: 100%;
+.auth-box{
+  background:#ffffff;
+  border-radius:24px;
+  padding:28px;
+  width:100%;
+  max-width:360px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);
 }
 
-.cirrus-logo {
-  height: 30px;
-  margin: 10px auto;
+.logo{
+  width:230px;
+  height:auto;
+  margin:10px auto 6px;
+  display:block;
+  object-fit:contain;
 }
 
-.crm-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1e3a8a;
+.welcome-title{ color:#1e3a8a; font-size:24px; font-weight:800; margin:0 0 2px; }
+.portal-title{ font-size:16px; font-weight:700; margin:4px 0 2px; }
+.portal-subtitle{ color:#6b7280; font-size:13px; margin:0 0 14px; }
+
+/* Inputs */
+.input-group{
+  position:relative;
+  margin:0 auto 12px;
+  width:100%;
+  max-width:300px;
+}
+.input-group input{
+  width:100%;
+  padding:12px 44px 12px 42px; /* left icon + right eye room */
+  border:2px solid #e5e7eb;
+  border-radius:10px;
+  background:#f9fafb;
+  font-size:15px;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  box-sizing:border-box;
+}
+.input-group input:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px rgba(147,197,253,.25);
+  background:#fff;
 }
 
-.login-heading {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 10px;
+/* Icons */
+.input-icon{
+  position:absolute;
+  top:50%;
+  left:12px;
+  transform:translateY(-50%);
+  color:#6b7280;
+  font-size:16px;
+  pointer-events:none;
+}
+.eye-toggle{
+  position:absolute;
+  top:50%;
+  right:12px;
+  transform:translateY(-50%);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  padding:4px;
+  color:#6b7280;
+  line-height:0;
 }
 
-.login-subheading {
-  font-size: 14px;
-  color: #4b5563;
-  margin-bottom: 24px;
+/* Strength bar sits BELOW confirm password; hidden until user types */
+.pw-meter{
+  margin:8px auto 4px;
+  height:8px;
+  background:#e5e7eb;
+  border-radius:999px;
+  overflow:hidden;
+  width:100%;
+  max-width:300px;
+}
+.pw-meter-bar{
+  height:100%;
+  width:0%;
+  transition:width .25s ease;
 }
 
-.form-group {
-  position: relative;
-  margin-bottom: 16px;
+/* Guidance / strength label — centered single line */
+.pw-guidance{
+  width:100%;
+  max-width:335px;         /* same as your input width */
+  margin:8px auto 10px;    /* auto centers the block */
+  color:#6b7280;
+  font-size:12px;
+  text-align:center;      /* center the text itself */
+  white-space:nowrap;     /* keep on one line like the subtitle */
+  display:block;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background-color: #f9fafb;
-  font-size: 14px;
-}
 
-.form-icon {
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  transform: translateY(-50%);
-  color: #6b7280;
+/* Button */
+.submit-btn{
+  width:100%;
+  max-width:300px;
+  padding:12px;
+  background-color:#1e3a8a;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+  margin:6px auto 0;
 }
+.submit-btn:hover{ background-color:#172554; }
 
-.auth-btn {
-  width: 100%;
-  padding: 10px;
-  background-color: #1e3a8a;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 12px;
-}
+.switch-text{ font-size:14px; margin-top:14px; }
+.switch-text a{ color:#1e3a8a; font-weight:600; text-decoration:none; }
+.switch-text a:hover{ text-decoration:underline; }
 
-.auth-btn:hover {
-  background-color: #1e40af;
-}
+.error-text{ color:#dc2626; font-size:13px; margin:6px 0 2px; }
 
-.alt-link {
-  margin-top: 16px;
-  font-size: 13px;
-}
-
-.alt-link a {
-  color: #1e3a8a;
-  font-weight: 500;
-  text-decoration: none;
+@media (max-width:420px){
+  .auth-box{ max-width:92vw; padding:24px; }
+  .input-group, .pw-meter, .pw-guidance, .submit-btn{ max-width:92%; }
 }
