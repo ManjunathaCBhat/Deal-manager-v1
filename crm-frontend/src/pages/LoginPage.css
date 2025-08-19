@@ -1,17 +1,21 @@
+/* src/pages/LoginPage.css */
+@import '../styles/auth-theme.css';
+
+/* Same centering; theme supplies gradient background */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f9fafb;
   min-height: 100vh;
 }
 
+/* ~75% card */
 .auth-box {
-  background-color: white;
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 400px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 28px;
   width: 100%;
+  max-width: 315px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -19,99 +23,110 @@
   align-items: center;
 }
 
+/* Smaller logo */
 .logo {
-  width: 120px;
+  width: 230px;
   height: auto;
-  margin: 16px auto;
+  margin: 10px auto 6px;
   display: block;
-  }
+  object-fit: contain;
+}
 
+/* Tighter type */
 .welcome-title {
   color: #1e3a8a;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 2px;
 }
 
 .portal-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .portal-subtitle {
   color: #6b7280;
-  font-size: 14px;
-  margin-bottom: 24px;
+  font-size: 13px;
+  margin-bottom: 14px;
 }
 
+/* Inputs match register */
 .input-group {
   position: relative;
-  margin-bottom: 16px;
+  margin: 0 auto 12px;
   width: 100%;
-  max-width: 340px;
+  max-width: 270px;
 }
 
 .input-group input {
   width: 100%;
-  padding: 12px 16px 12px 40px;
+  padding: 10px 12px 10px 38px;
   border: 2px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
   background-color: #f9fafb;
   box-sizing: border-box;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.25);
+  background: #fff;
 }
 
 .input-icon {
   position: absolute;
   top: 50%;
-  left: 12px;
+  left: 11px;
   transform: translateY(-50%);
   color: #6b7280;
+  font-size: 14px;
 }
 
+/* Remember me row aligned to input width */
 .remember-me {
   text-align: left;
-  font-size: 13px;
-  margin-bottom: 20px;
+  font-size: 14px;
+  margin: 6px auto 16px;
   width: 100%;
-  max-width: 340px;
+  max-width: 270px;
 }
 
+/* Button matches input width */
 .submit-btn {
   width: 100%;
-  max-width: 340px;
-  padding: 12px;
+  max-width: 270px;
+  padding: 10px;
   background-color: #1e3a8a;
   color: white;
   border: none;
   border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 16px;
   cursor: pointer;
+  margin: 0 auto;
 }
 
-
-.submit-btn:hover {
-  background-color: #172554;
-}
+.submit-btn:hover { background-color: #172554; }
 
 .switch-text {
-  font-size: 13px;
-  margin-top: 20px;
+  font-size: 14px;
+  margin-top: 14px;
 }
 
 .switch-text a {
   color: #1e3a8a;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
 }
 
-.switch-text a:hover {
-  text-decoration: underline;
-}
+.switch-text a:hover { text-decoration: underline; }
 
 .error-text {
-  color: red;
+  color: #dc2626;
   font-size: 13px;
-  margin-top: 8px;
+  margin: 6px 0 2px;
 }

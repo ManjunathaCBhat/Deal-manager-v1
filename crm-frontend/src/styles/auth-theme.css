@@ -1,0 +1,195 @@
+/* src/styles/auth-theme.css */
+
+/* -------- Tokens -------- */
+:root{
+  /* Cirrus-ish blues & red */
+  --clr-blue-1:#0f2a6a;
+  --clr-blue-2:#1b3aa6;
+  --clr-violet:#6b2fb4;
+  --clr-red-1:#c61f3a;
+  --clr-red-2:#ff2f2f;
+
+  --brand:#1e3a8a;
+  --brand-600:#173b73;
+  --brand-700:#122d57;
+
+  --card-bg:rgba(255,255,255,0.88);
+  --card-border:rgba(255,255,255,0.65);
+  --shadow:0 12px 30px rgba(3, 16, 48, 0.25);
+
+  --ring:#93c5fd;
+  --error:#dc2626;
+  --text-900:#0f172a;
+  --text-600:#6b7280;
+}
+
+/* -------- Background (gradient + pixel grid) -------- */
+.auth-container{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+
+  /* Centered blend: blue → violet @50% → red */
+  background:
+    linear-gradient(
+      to right,
+      var(--clr-blue-1) 0%,
+      var(--clr-blue-2) 20%,
+      var(--clr-violet) 50%,
+      var(--clr-red-1) 80%,
+      var(--clr-red-2) 100%
+    );
+}
+
+/* Pixel / halftone look */
+.auth-container::before{
+  content:"";
+  position:absolute; inset:-10%;
+  z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+    linear-gradient(0deg,  rgba(255,255,255,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.05) .5px, transparent .5px),
+    linear-gradient(0deg,  rgba(255,255,255,.05) .5px, transparent .5px);
+  background-size:
+    18px 18px, 18px 18px,
+    10px 10px, 10px 10px;
+  background-position:
+    0 0, 0 0,
+    5px 6px, 5px 6px;
+  mix-blend-mode: overlay;
+  opacity:.45;
+  filter: blur(.1px);
+}
+
+/* gentle animated glow */
+@keyframes floaty {
+  0%   { transform:translate(-4%, -2%) scale(1);    opacity:.22; }
+  50%  { transform:translate(2%, 3%)    scale(1.05); opacity:.30; }
+  100% { transform:translate(-4%, -2%) scale(1);    opacity:.22; }
+}
+.auth-container::after{
+  content:"";
+  position:absolute; z-index:0;
+  width:60vmax; height:60vmax; border-radius:50%;
+  left:50%; top:50%;
+  transform:translate(-50%, -50%);
+  background:radial-gradient(closest-side, rgba(255,255,255,.18), transparent 65%);
+  animation: floaty 18s ease-in-out infinite;
+}
+
+/* -------- Card -------- */
+.auth-box{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:420px;
+  padding:40px;
+  border-radius:28px;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  box-shadow:var(--shadow);
+  text-align:center;
+  backdrop-filter:saturate(150%) blur(10px);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.auth-box:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(3,16,48,.30);
+}
+
+/* -------- Header -------- */
+.logo{ width:240px; height:auto; margin:6px auto 2px; display:block; }
+.welcome-title{ color:var(--brand); font-weight:800; font-size:30px; margin:0 0 4px; }
+.portal-title{ font-weight:700; font-size:18px; margin:4px 0 0; }
+.portal-subtitle{ color:var(--text-600); font-size:14px; margin:0 0 18px; }
+
+/* -------- Inputs -------- */
+.input-group{ position:relative; margin-bottom:14px; }
+.input-group input{
+  width:100%;
+  padding:12px 14px 12px 42px;
+  border:2px solid #e5e7eb;
+  border-radius:10px;
+  background:#f9fafb;
+  font-size:15px;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.input-group input:focus{
+  border-color:var(--ring);
+  box-shadow:0 0 0 4px rgba(147,197,253,.25);
+  background:#ffffff;
+}
+.input-icon{
+  position:absolute; top:50%; left:12px;
+  transform:translateY(-50%);
+  color:#6b7280;
+  font-size:16px;
+}
+.eye-toggle{
+  position:absolute; top:50%; right:10px; transform:translateY(-50%);
+  background:transparent; border:none; cursor:pointer;
+  padding:6px; color:#6b7280;
+}
+
+/* -------- Actions -------- */
+.remember-me{ text-align:left; font-size:13px; margin:8px 0 14px; }
+.submit-btn{
+  width:100%; padding:12px;
+  border:none; border-radius:10px; cursor:pointer;
+  font-weight:700; font-size:16px; color:#fff;
+  background: linear-gradient(180deg, var(--brand) 0%, var(--brand-600) 100%);
+  box-shadow: 0 6px 14px rgba(30,58,138,.35);
+  transition: transform .06s ease, filter .15s ease, box-shadow .15s ease;
+}
+.submit-btn:hover{ filter: brightness(1.03); box-shadow:0 10px 20px rgba(30,58,138,.45); }
+.submit-btn:active{ transform: translateY(1px); }
+.submit-btn[disabled]{ opacity:.6; cursor:not-allowed; filter:none; box-shadow:none; }
+
+/* helper text */
+.switch-text{ font-size:14px; margin-top:18px; }
+.switch-text a{ color:var(--brand); text-decoration:none; font-weight:600; }
+.switch-text a:hover{ text-decoration:underline; }
+
+/* errors */
+.error-text{ color:var(--error); font-size:13px; margin:8px 0 2px; }
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  .auth-container::after, .auth-box:hover{ animation:none; transform:none; }
+}
+
+/* ---- Password strength meter ---- */
+.pw-meter { margin: 6px auto 2px; height: 8px; background:#e5e7eb; border-radius: 999px; overflow: hidden; max-width:300px; }
+.pw-meter-bar { height: 100%; width: 0%; transition: width .25s ease; }
+.pw-weak   { background: linear-gradient(90deg,#ef4444,#f97316); }
+.pw-ok     { background: linear-gradient(90deg,#f59e0b,#eab308); }
+.pw-good   { background: linear-gradient(90deg,#22c55e,#16a34a); }
+.pw-strong { background: linear-gradient(90deg,#22c55e,#0ea5e9); }
+
+/* Guidance / strength label — centered */
+.pw-guidance{
+  width:100%;
+  max-width:300px;
+  margin:8px auto 10px;
+  color:#6b7280;
+  font-size:12px;
+  text-align:center;
+  white-space:nowrap;
+  display:block;
+}
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed; z-index: 10; left: 50%; top: 24px; transform: translateX(-50%);
+  background: #10b981; color: #fff; padding: 10px 14px; border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.18); opacity: 0; pointer-events:none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast .small { display:block; font-size:12px; opacity:.9; }

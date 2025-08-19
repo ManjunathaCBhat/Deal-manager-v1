@@ -76,7 +76,14 @@ const handleLogout = () => {
       <div className="dashboard-page">
         {/* Navigation Bar */}
         <nav className="top-nav">
-          <div className="nav-left">CRM Project</div>
+        <div className="nav-left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img
+            src="https://www.cirruslabs.io/hubfs/Cirruslabs-Assets-20/Images/Cirruslabs-Logo%20for%20Website.jpg"
+            alt="Cirrus Labs"
+            style={{ height: '75px', borderRadius: '3px' }}
+          />
+          <span style={{ fontWeight: 600, fontSize: '24px', color: '#111827' }}>CRM Portal</span>
+        </div>
           <div className="nav-center">
             <a href="/dashboard" className="nav-link active">Dashboard</a>
             <a href="/companies" className="nav-link ">Companies</a>

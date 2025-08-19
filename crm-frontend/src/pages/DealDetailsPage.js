@@ -60,7 +60,14 @@ const DealDetailsPage = () => {
   return (
     <div className="deal-details-page">
       <nav className="top-nav">
-        <div className="nav-left">CRM Project</div>
+        <div className="nav-left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img
+            src="https://www.cirruslabs.io/hubfs/Cirruslabs-Assets-20/Images/Cirruslabs-Logo%20for%20Website.jpg"
+            alt="Cirrus Labs"
+            style={{ height: '75px', borderRadius: '3px' }}
+          />
+          <span style={{ fontWeight: 600, fontSize: '24px', color: '#111827' }}>CRM Portal</span>
+        </div>
         <div className="nav-center">
           <Link to="/dashboard" className="nav-link">Dashboard</Link>
           <Link to="/companies" className="nav-link">Companies</Link>
