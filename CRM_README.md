@@ -1,6 +1,6 @@
 # Cirrus CRM Platform
 
-A scalable multi-role **Customer Relationship Management (CRM)** system built with **React, Spring Boot, and PostgreSQL**, designed for sales and admin workflows. This project was developed as part of the Summer 2025 internship program at **CirrusLabs**.
+A scalable multi-role **Customer Relationship Management (CRM)** system built with **React, Django, and PostgreSQL**, designed for sales and admin workflows. This project was developed as part of the Summer 2025 internship program at **CirrusLabs**.
 
 ## Features
 
@@ -15,9 +15,9 @@ A scalable multi-role **Customer Relationship Management (CRM)** system built wi
 
 ### Technical Stack
 - **Frontend**: React.js + CSS  
-- **Backend**: Spring Boot (REST API)/Django REST Framework 
-- **Database**: PostgreSQL (via Docker for local testing)  
-- **AI Integration**: GPT-4 (OpenAI API)  
+- **Backend**: Django REST Framework 
+- **Database**: PostgreSQL (via Docker for local testing) 
+- **AI Integration**: GPT-4 (OpenAI API) 
 - **Speech Integration**: Google Cloud Speech-to-Text API  
 
 ---
@@ -26,8 +26,7 @@ A scalable multi-role **Customer Relationship Management (CRM)** system built wi
 
 ### Prerequisites
 - **Node.js 18+**
-- **Java 17+**
-- **Docker Desktop** (for PostgreSQL setup)
+- **Python**
 - **Google Cloud API key** (Speech-to-Text)
 - **OpenAI API key** (Predictive analytics)
 
@@ -48,12 +47,7 @@ A scalable multi-role **Customer Relationship Management (CRM)** system built wi
 3. Install backend dependencies:
    ```bash
    cd backend
-   ./mvnw clean install
-   ```
-
-4. Start the PostgreSQL database with Docker:
-   ```bash
-   docker compose up -d
+   pip install -r requirements.txt
    ```
 
 5. Configure environment variables:
@@ -67,31 +61,15 @@ A scalable multi-role **Customer Relationship Management (CRM)** system built wi
 
 6. Run backend server:
    ```bash
-   ./mvnw spring-boot:run
+   python manage.py runserver
    ```
 
 7. Run frontend server:
    ```bash
-   npm run dev
+   npm start
    ```
 
 8. Open [http://localhost:3000](http://localhost:3000) to view the app.
-
----
-
-## Testing
-
-Run unit tests:
-```bash
-cd backend
-./mvnw test
-```
-
-Run frontend tests:
-```bash
-cd frontend
-npm run test
-```
 
 ---
 
