@@ -124,14 +124,14 @@ const DealAssistant = () => {
           placeholder="Type your response..."
         />
         <button type="submit">Send</button>
-        <button
+        {/* <button
           type="button"
           onClick={handleMicClick}
           className={listening ? "mic-btn listening" : "mic-btn"}
           title={listening ? "Listening..." : "Start voice input"}
         >
           <FaMicrophone />
-        </button>
+        </button>  */}
       </form>
     </div>
   );
