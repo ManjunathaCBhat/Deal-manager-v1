@@ -7,11 +7,9 @@ from rest_framework_simplejwt.views import (
 from api.views import DealChatView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include("api.urls")),
-    path("deal-chat/", DealChatView.as_view()), 
-    # path("", include("api.urls")),
-
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
+    path('deal-chat/', DealChatView.as_view()),
 
     # JWT auth endpoints (project-level)
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

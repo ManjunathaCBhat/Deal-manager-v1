@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 
 from django.db import transaction
@@ -52,7 +53,42 @@ class DealChatView(APIView):
     }
     """
 
-    permission_classes = [permissions.AllowAny]  
+    permission_classes = [permissions.AllowAny]
+
+    recap_keywords = [
+        "recap",
+        "summary",
+        "summarize",
+        "remind",
+        "reminder",
+        "what have",
+        "where are we",
+        "progress",
+        "so far",
+        "status",
+    ]
+    question_cues = ["what", "which", "tell", "remind", "show", "list", "recap"]
+    field_keywords = {
+        "title": ["title", "name"],
+        "company": ["company", "account"],
+        "amount": ["amount", "value", "dollars", "budget", "price"],
+        "stage": ["stage", "status", "phase"],
+        "close_date": ["close date", "closing date", "deadline", "expected close"],
+        "contacts": ["contact", "contacts", "people"],
+    }
+
+    change_triggers = [
+        "change",
+        "update",
+        "edit",
+        "modify",
+        "adjust",
+        "set",
+        "switch",
+        "go back",
+        "go to",
+    ]
+
     def post(self, request):
         user_message = (request.data.get("message") or "").strip()
         deal_state = request.data.get("deal_state")
@@ -83,6 +119,7 @@ class DealChatView(APIView):
                 "close_date": None,
                 "contacts": [],
                 "pending_company_choice": None,
+                "pending_new_company_name": None,
             }
             ai_message = generate_reply(
                 user_prompt="Greet the user, explain you will help them create a new deal, then ask for the deal title.",
@@ -92,6 +129,15 @@ class DealChatView(APIView):
                 {"ai_message": ai_message, "deal_state": deal_state},
                 status=status.HTTP_200_OK,
             )
+
+        if self.is_memory_request(lowered):
+            return self.handle_memory_request(user_message, deal_state)
+
+        field_to_change, new_value = self.parse_change_request(user_message, deal_state)
+        if field_to_change:
+            change_response = self.handle_change_request(field_to_change, new_value, user_message, deal_state)
+            if change_response:
+                return change_response
 
         step = deal_state.get("step")
 
@@ -121,6 +167,147 @@ class DealChatView(APIView):
             {"ai_message": ai_message, "deal_state": deal_state},
             status=status.HTTP_200_OK,
         )
+
+    def is_memory_request(self, lowered: str) -> bool:
+        if any(keyword in lowered for keyword in self.recap_keywords):
+            return True
+
+        if any(cue in lowered for cue in self.question_cues):
+            for terms in self.field_keywords.values():
+                if any(term in lowered for term in terms):
+                    return True
+
+        return False
+
+    def handle_memory_request(self, user_message, deal_state):
+        summary_text = self.format_deal_state_summary(deal_state)
+        ai_message = generate_reply(
+            user_prompt=(
+                f"The user asked: '{user_message}'. Use the following deal info to answer their question succinctly:\n"
+                f"{summary_text}\n"
+                "If details are missing, let them know what is still needed. Offer to continue the deal flow."
+            ),
+            context_note="User requested a recap or asked about previously captured deal data.",
+        )
+        return Response(
+            {"ai_message": ai_message, "deal_state": deal_state},
+            status=status.HTTP_200_OK,
+        )
+
+    def format_deal_state_summary(self, deal_state):
+        if not deal_state:
+            return "No deal information has been captured yet."
+
+        parts = []
+        title = deal_state.get("title")
+        if title:
+            parts.append(f"Title: {title}")
+
+        company_name = deal_state.get("company_name")
+        if company_name:
+            parts.append(f"Company: {company_name}")
+
+        amount = deal_state.get("amount")
+        if amount:
+            parts.append(f"Amount: ${amount:,.2f}")
+
+        stage = deal_state.get("stage")
+        if stage:
+            parts.append(f"Stage: {stage}")
+
+        close_date = deal_state.get("close_date")
+        if close_date:
+            parts.append(f"Close date: {close_date}")
+
+        contacts = deal_state.get("contacts") or []
+        if contacts:
+            formatted = ", ".join(str(cid) for cid in contacts)
+            parts.append(f"Contacts: {formatted}")
+
+        if not parts:
+            return "No deal details have been provided yet."
+
+        current_step = deal_state.get("step")
+        if current_step and current_step != "done":
+            parts.append(f"Current step: {current_step}")
+
+        return "\n".join(parts)
+
+    def parse_change_request(self, user_message, deal_state):
+        lowered = user_message.lower()
+        trigger_present = any(trigger in lowered for trigger in self.change_triggers)
+
+        supported_fields = {"amount", "stage", "close_date"}
+        for field, terms in self.field_keywords.items():
+            if field not in supported_fields:
+                continue
+            if any(term in lowered for term in terms):
+                if not trigger_present:
+                    current_step = (deal_state or {}).get("step")
+                    existing_value = (deal_state or {}).get(field)
+                    if current_step == field or existing_value in (None, ""):
+                        continue
+                value = None
+                if field == "amount":
+                    match = re.search(r"-?\d[\d,\.]*", user_message)
+                    if match:
+                        value = match.group(0)
+                elif field == "stage":
+                    for option in ["proposal", "qualified", "negotiation"]:
+                        if option in lowered:
+                            value = option
+                            break
+                elif field == "close_date":
+                    match = re.search(r"(\d{4}-\d{2}-\d{2})", user_message)
+                    if match:
+                        value = match.group(1)
+                return field, value
+
+        return None, None
+
+    def handle_change_request(self, field, new_value, user_message, deal_state):
+        if field == "amount":
+            deal_state["step"] = "amount"
+            if new_value:
+                return self.handle_amount_step(new_value, deal_state)
+            ai_message = generate_reply(
+                user_prompt="The user wants to change the deal amount. Ask them for the new amount in dollars.",
+                context_note="Assist the user in updating the amount.",
+            )
+            return Response(
+                {"ai_message": ai_message, "deal_state": deal_state},
+                status=status.HTTP_200_OK,
+            )
+
+        if field == "stage":
+            deal_state["step"] = "stage"
+            if new_value:
+                return self.handle_stage_step(new_value, deal_state)
+            ai_message = generate_reply(
+                user_prompt="Ask the user which stage the deal should be updated to: proposal, qualified, or negotiation.",
+                context_note="User requested to change the deal stage.",
+            )
+            return Response(
+                {"ai_message": ai_message, "deal_state": deal_state},
+                status=status.HTTP_200_OK,
+            )
+
+        if field == "close_date":
+            deal_state["step"] = "close_date"
+            if new_value:
+                return self.handle_close_date_step(new_value, deal_state)
+            ai_message = generate_reply(
+                user_prompt=(
+                    "Ask the user for the new expected close date in YYYY-MM-DD format or let them know they can say 'skip'."
+                ),
+                context_note="User wants to change the close date.",
+            )
+            return Response(
+                {"ai_message": ai_message, "deal_state": deal_state},
+                status=status.HTTP_200_OK,
+            )
+
+        return None
 
     def handle_title_step(self, user_message, deal_state):
         if len(user_message) < 3:
@@ -153,6 +340,7 @@ class DealChatView(APIView):
         """
         Two modes:
         - If pending_company_choice is set, expect an id from the user
+        - If pending_new_company_name is set, expect yes/no confirmation to create it
         - Otherwise treat message as a name search
         """
         pending = deal_state.get("pending_company_choice")
@@ -217,18 +405,66 @@ class DealChatView(APIView):
                 status=status.HTTP_200_OK,
             )
 
+        pending_new = deal_state.get("pending_new_company_name")
+        if pending_new:
+            normalized = user_message.strip().lower()
+            yes_values = {"yes", "y", "sure", "ok", "okay", "create", "add", "please do"}
+            no_values = {"no", "n", "nope", "stop", "cancel"}
+
+            if normalized in yes_values:
+                company = Company.objects.create(name=pending_new)
+                deal_state["company_id"] = company.id
+                deal_state["company_name"] = company.name
+                deal_state["pending_new_company_name"] = None
+                deal_state["step"] = "amount"
+                ai_message = generate_reply(
+                    user_prompt=(
+                        f"Let the user know you created a new company named '{company.name}' and ask for the deal amount in dollars."
+                    ),
+                    context_note="User confirmed creating a new company directly from the chat.",
+                )
+                return Response(
+                    {"ai_message": ai_message, "deal_state": deal_state},
+                    status=status.HTTP_200_OK,
+                )
+
+            if normalized in no_values:
+                deal_state["pending_new_company_name"] = None
+                ai_message = generate_reply(
+                    user_prompt=(
+                        f"Tell the user you will not create '{pending_new}' right now and ask them to type the company name again."
+                    ),
+                    context_note="User declined to create a new company entry.",
+                )
+                return Response(
+                    {"ai_message": ai_message, "deal_state": deal_state},
+                    status=status.HTTP_200_OK,
+                )
+
+            ai_message = generate_reply(
+                user_prompt=(
+                    f"The user replied '{user_message}'. Ask them to answer yes or no if they want to add the company '{pending_new}' to the CRM."
+                ),
+                context_note="Waiting for confirmation to create a new company entry.",
+            )
+            return Response(
+                {"ai_message": ai_message, "deal_state": deal_state},
+                status=status.HTTP_200_OK,
+            )
+
         # Normal flow: search by name
         name = user_message
         qs = Company.objects.filter(name__icontains=name)
         count = qs.count()
 
         if count == 0:
+            deal_state["pending_new_company_name"] = name
             ai_message = generate_reply(
                 user_prompt=(
                     f"The user typed '{name}' but there are no matching companies. "
-                    "Tell them you could not find that company and ask them to try the exact name as in the CRM."
+                    "Ask if they want to create a new company record with that name and tell them to reply yes or no."
                 ),
-                context_note="Company search returned zero results.",
+                context_note="Company search returned zero results and we can create it for them.",
             )
             return Response(
                 {"ai_message": ai_message, "deal_state": deal_state},

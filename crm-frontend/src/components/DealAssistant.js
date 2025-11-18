@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './DealAssistant.css';
 import { FaMicrophone } from 'react-icons/fa';
 import axios from 'axios';
@@ -14,72 +14,69 @@ if (SpeechRecognition) {
 }
 
 const DealAssistant = () => {
-  const [messages, setMessages] = useState([
-    { sender: 'ai', text: "Hi! I can help you create a new deal. What's the deal name?" }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [deal, setDeal] = useState({});
+  const [dealState, setDealState] = useState(null);
   const [listening, setListening] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const sendMessage = (text, sender = 'user') => {
-    setMessages((prev) => [...prev, { sender, text }]);
-    handleAIResponse(text);
-  };
+  useEffect(() => {
+    const bootConversation = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.post('/deal-chat/', {
+          message: 'start new deal',
+          deal_state: null,
+        });
+        setMessages([{ sender: 'ai', text: res.data.ai_message }]);
+        setDealState(res.data.deal_state);
+      } catch (error) {
+        setMessages([
+          {
+            sender: 'ai',
+            text: "I'm having trouble contacting the assistant. Please try again in a moment.",
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleAIResponse = async (userInput) => {
+    bootConversation();
+  }, []);
+
+  const callDealChat = useCallback(async (userInput) => {
     const trimmed = userInput.trim();
+    if (!trimmed) return;
 
-    if (!deal.title) {
-      setDeal({ ...deal, title: trimmed });
-      setMessages((prev) => [...prev, { sender: 'ai', text: "Great! Which company is this deal with?" }]);
-    } else if (!deal.company) {
-      try {
-        const res = await axios.get(`/api/companies/?search=${trimmed}`);
-        const company = res.data.find(c => c.name.toLowerCase() === trimmed.toLowerCase());
+    setMessages((prev) => [...prev, { sender: 'user', text: trimmed }]);
+    setLoading(true);
 
-        if (company) {
-          setDeal({ ...deal, company: company.id });
-          setMessages((prev) => [...prev, { sender: 'ai', text: "What's the deal value (in dollars)?" }]);
-        } else {
-          setMessages((prev) => [...prev, { sender: 'ai', text: "❌ I couldn't find that company. Please try again." }]);
-        }
-      } catch (err) {
-        setMessages((prev) => [...prev, { sender: 'ai', text: "❌ Error looking up company." }]);
-      }
-    } else if (!deal.amount) {
-      const amount = parseFloat(trimmed.replace(/[^0-9.]/g, ''));
-      setDeal({ ...deal, amount });
-      setMessages((prev) => [...prev, { sender: 'ai', text: "What stage is the deal in? (e.g., proposal, qualified)" }]);
-    } else if (!deal.stage) {
-      setDeal({ ...deal, stage: trimmed });
-      setMessages((prev) => [...prev, { sender: 'ai', text: "When is the expected close date? (YYYY-MM-DD)" }]);
-    } else if (!deal.close_date) {
-      setDeal({ ...deal, close_date: trimmed });
-      setMessages((prev) => [...prev, { sender: 'ai', text: "Do you want to associate any contacts? Type comma-separated contact IDs (or leave blank)." }]);
-    } else if (!deal.contacts) {
-      const contactIds = trimmed
-        ? trimmed.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n))
-        : [];
-      const fullDeal = { ...deal, contacts: contactIds };
-
-      setMessages((prev) => [...prev, { sender: 'ai', text: "Creating your deal..." }]);
-
-      try {
-        await axios.post('/api/deals/', fullDeal);
-        setMessages((prev) => [...prev, { sender: 'ai', text: "✅ Deal created successfully!" }]);
-        setDeal({}); // Reset
-      } catch (err) {
-        setMessages((prev) => [...prev, { sender: 'ai', text: "❌ Failed to create deal." }]);
-      }
+    try {
+      const res = await axios.post('/deal-chat/', {
+        message: trimmed,
+        deal_state: dealState,
+      });
+      setDealState(res.data.deal_state);
+      setMessages((prev) => [...prev, { sender: 'ai', text: res.data.ai_message }]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: 'ai',
+          text: '❌ Sorry, something went wrong talking to the assistant.',
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [dealState]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (input.trim()) {
-      sendMessage(input);
-      setInput('');
-    }
+    if (!input.trim() || loading) return;
+    callDealChat(input);
+    setInput('');
   };
 
   const handleMicClick = () => {
@@ -98,9 +95,11 @@ const DealAssistant = () => {
     recognition.onend = () => setListening(false);
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      sendMessage(transcript);
+      if (!loading) {
+        callDealChat(transcript);
+      }
     };
-  }, []);
+  }, [callDealChat]);
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
@@ -114,6 +113,7 @@ const DealAssistant = () => {
         {messages.map((msg, idx) => (
           <div key={idx} className={`message ${msg.sender}`}>{msg.text}</div>
         ))}
+        {loading && <div className="message ai">Thinking…</div>}
         <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="chat-input">
