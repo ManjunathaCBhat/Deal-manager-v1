@@ -46,35 +46,6 @@ const ActivityLogPage = () => {
 
   return (
     <div className="activity-log-container">
-      {/* Nav Bar */}
-      <nav className="top-nav">
-        <div className="nav-left" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img
-            src="https://www.cirruslabs.io/hubfs/Cirruslabs-Assets-20/Images/Cirruslabs-Logo%20for%20Website.jpg"
-            alt="Cirrus Labs"
-            style={{ height: '75px', borderRadius: '3px' }}
-          />
-          <span style={{ fontWeight: 600, fontSize: '24px', color: '#111827' }}>CRM Portal</span>
-        </div>
-        <div className="nav-center">
-          <a href="/dashboard" className="nav-link">Dashboard</a>
-          <a href="/companies" className="nav-link">Companies</a>
-          <a href="/customers" className="nav-link">Customers</a>
-          <a href="/deals" className="nav-link">Deals</a>
-          <a href="/user-management" className="nav-link">Management</a>
-          <a href="/activity-log" className="nav-link active">Activity</a>
-        </div>
-        <div className="nav-right">
-          <FaBell className="nav-icon" />
-          <img
-            src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-            alt="Default Avatar"
-            className="profile-avatar"
-          />
-          <button className="logout-btn" onClick={handleLogout}>Sign Out</button>
-        </div>
-      </nav>
-
       <div className="activity-log-header">
         <h1>Activity Log</h1>
         <div className="activity-actions">

@@ -12,13 +12,17 @@ router.register(r'customers', CustomerViewSet)
 router.register(r'deals', DealViewSet)
 
 urlpatterns = [
+    # REST routes: /api/companies/, /api/customers/, /api/deals/
     path('', include(router.urls)),
+
+    # Existing endpoints
     path('voice-deal/', VoiceDealView.as_view(), name='voice-deal'),
     path('activity-log/', AdminRecentActionsAPIView.as_view(), name='activity-log'),
+    
 
-    # 🔐 Auth endpoints
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register/', RegisterView.as_view(), name='register'),
-
+    # New AI chat endpoint: /api/deal-chat/
+    path('deal-chat/', DealChatView.as_view(), name='deal-chat'),
 ]

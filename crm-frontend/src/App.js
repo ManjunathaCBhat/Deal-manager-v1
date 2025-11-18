@@ -12,6 +12,7 @@ import EditDealPage from './pages/EditDealPage';
 import PrivateRoute from './auth/PrivateRoute';
 import { AuthProvider } from './auth/AuthContext';
 import RegisterPage from './pages/RegisterPage';
+import Layout from './components/Layout';
 
 function App() {
   return (
@@ -20,14 +21,70 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
-          <Route path="/activity-log" element={<PrivateRoute><ActivityLogPage /></PrivateRoute>} />
-          <Route path="/user-management" element={<PrivateRoute><UserManagementPage /></PrivateRoute>} />
-          <Route path="/companies" element={<PrivateRoute><CompaniesPage /></PrivateRoute>} />
-          <Route path="/deals" element={<PrivateRoute><DealsPage /></PrivateRoute>} />
-          <Route path="/deal-details/:id" element={<PrivateRoute><DealDetailsPage /></PrivateRoute>} />
-          <Route path="/deals/edit/:id" element={<PrivateRoute><EditDealPage /></PrivateRoute>} />
-          <Route path="/customers" element={<PrivateRoute><CustomersPage /></PrivateRoute>} />
+
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Layout activePage="dashboard">
+                <DashboardPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/activity-log" element={
+            <PrivateRoute>
+              <Layout activePage="activity-log">
+                <ActivityLogPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/user-management" element={
+            <PrivateRoute>
+              <Layout activePage="user-management">
+                <UserManagementPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/companies" element={
+            <PrivateRoute>
+              <Layout activePage="companies">
+                <CompaniesPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/deals" element={
+            <PrivateRoute>
+              <Layout activePage="deals">
+                <DealsPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/deal-details/:id" element={
+            <PrivateRoute>
+              <Layout activePage="deals">
+                <DealDetailsPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/deals/edit/:id" element={
+            <PrivateRoute>
+              <Layout activePage="deals">
+                <EditDealPage />
+              </Layout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/customers" element={
+            <PrivateRoute>
+              <Layout activePage="customers">
+                <CustomersPage />
+              </Layout>
+            </PrivateRoute>
+          } />
         </Routes>
       </Router>
     </AuthProvider>
