@@ -41,9 +41,9 @@ function LoginPage() {
       <form className="auth-box" onSubmit={handleSubmit} noValidate>
         <h2 className="welcome-title">Welcome to CRM Portal</h2>
         <img
+          src="https://framerusercontent.com/images/advb24HpTAed7ZIqZsd5xFiJZjM.png?scale-down-to=512&width=570&height=105"
+          alt="CirrusLabs"
           className="logo"
-          alt="Cirrus Labs"
-          src="https://www.cirruslabs.io/hubfs/Cirruslabs-Assets-20/Images/Cirruslabs-Logo%20for%20Website.jpg"
         />
         <p className="portal-subtitle">Sign in to Manage and Protect</p>
 
