@@ -1,16 +1,21 @@
-# crm-frontend/Dockerfile
+# crm/Dockerfile
+
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
+# Install dependencies first for better caching
+COPY package*.json /app/
+
 RUN npm install
 
-COPY . .
+# Copy rest of the app
+COPY . /app/
 
-# Expose React dev server port
+# Expose Next dev port
 EXPOSE 3000
 
-# For CRA: "start"
-# For Vite: change this to ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
-CMD ["npm", "start"]
+# Use env variables at runtime (NEXT_PUBLIC_AZURE_CLIENT_ID, etc)
+# You will pass them via docker-compose or the Azure App Service config
+
+CMD ["npm", "run", "dev", "--", "-p", "3000", "-H", "0.0.0.0"]

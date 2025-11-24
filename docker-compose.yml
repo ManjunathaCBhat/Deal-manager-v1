@@ -1,35 +1,43 @@
-version: "3.9"
-
 services:
   backend:
-    build:
-      context: ./CRM_backend
-      dockerfile: Dockerfile
+    build: ./crm_backend
+    container_name: crm_backend
     env_file:
-      - ./.env
-    environment:
-      # Explicitly pass DJANGO settings if you want overrides
-      # SECRET_KEY: "${SECRET_KEY}"
-      # DEBUG: "1"
-      # DATABASE_URL is already in .env
-      - DATABASE_URL=${DATABASE_URL}
+      - ./crm_backend/.env
     ports:
       - "8000:8000"
-    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
-    build:
-      context: ./crm-frontend
-      dockerfile: Dockerfile
+    build: ./crm-frontend
+    container_name: crm_frontend
     env_file:
-      - ./.env
+      - ./crm-frontend/.env.local
     environment:
-      # Adjust to whatever your frontend expects
-      # For CRA: REACT_APP_API_URL
-      # For Vite: VITE_API_URL
-      - REACT_APP_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8000
     ports:
       - "3000:3000"
     depends_on:
       - backend
+
+  postgres:
+    image: postgres:15
+    container_name: crm_postgres
     restart: unless-stopped
+    env_file:
+      - ./crm_backend/.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
