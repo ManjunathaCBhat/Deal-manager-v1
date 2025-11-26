@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import logoImage from "./logo.png";
 import cirruslabsImage from "./cirruslabs.png";
 
 const Login = () => {
     // Navigation handlers
+    const navigate = useNavigate();
     const handleCreateAccount = () => {
       window.location.href = "/register";
     };
@@ -17,6 +19,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [msLoading, setMsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [emptyError, setEmptyError] = useState("");
 
   const handleChange = (e) => {
     const value = e.target.name === "username" ? e.target.value.replace(/^\s+/, "") : e.target.value;
@@ -32,22 +35,41 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      console.log("Form submitted:", form);
-    }, 1200);
-    // Add shake animation if error
-    if (!form.username || !form.password) {
-      if (!form.username) {
-        const input = document.querySelector("[name='username']");
-        if (input) input.classList.add("shake");
-      }
-      if (!form.password) {
-        const input = document.querySelector("[name='password']");
-        if (input) input.classList.add("shake");
-      }
+    setEmptyError("");
+    // Remove shake class before re-adding (for repeated animation)
+    const usernameInput = document.querySelector("[name='username']");
+    const passwordInput = document.querySelector("[name='password']");
+    if (usernameInput) usernameInput.classList.remove("shake");
+    if (passwordInput) passwordInput.classList.remove("shake");
+
+    // Show error if both fields are empty
+    if (!form.username && !form.password) {
+      setEmptyError("Please enter username and password.");
+      if (usernameInput) usernameInput.classList.add("shake");
+      if (passwordInput) passwordInput.classList.add("shake");
+      return;
+    }
+
+    // Only set loading if both fields are filled
+    if (form.username && form.password) {
+      // Simulate API call
+      setLoading(true);
+      setTimeout(() => {
+        // Simulate credential check
+        if (form.username === "admin" && form.password === "admin") {
+          setLoading(false);
+          navigate("/dashboard");
+        } else {
+          setLoading(false);
+          // Shake both fields for invalid credentials
+          if (usernameInput) usernameInput.classList.add("shake");
+          if (passwordInput) passwordInput.classList.add("shake");
+        }
+      }, 1200);
+    } else {
+      // Shake fields for missing input
+      if (!form.username && usernameInput) usernameInput.classList.add("shake");
+      if (!form.password && passwordInput) passwordInput.classList.add("shake");
     }
   };
 
@@ -199,6 +221,9 @@ const Login = () => {
           >
             Login
           </h2>
+          {emptyError && (
+            <p style={{ color: "#ef4444", fontWeight: 600, textAlign: "center", margin: "0.5rem 0 1rem 0" }}>{emptyError}</p>
+          )}
 
           {/* Microsoft SSO Button */}
           <button
