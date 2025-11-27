@@ -33,43 +33,51 @@ const Login = () => {
     if (input) input.classList.remove("shake");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setEmptyError("");
+    setLoading(true);
+
     // Remove shake class before re-adding (for repeated animation)
     const usernameInput = document.querySelector("[name='username']");
     const passwordInput = document.querySelector("[name='password']");
     if (usernameInput) usernameInput.classList.remove("shake");
     if (passwordInput) passwordInput.classList.remove("shake");
 
-    // Show error if both fields are empty
     if (!form.username && !form.password) {
       setEmptyError("Please enter username and password.");
       if (usernameInput) usernameInput.classList.add("shake");
       if (passwordInput) passwordInput.classList.add("shake");
+      setLoading(false);
       return;
     }
 
-    // Only set loading if both fields are filled
-    if (form.username && form.password) {
-      // Simulate API call
-      setLoading(true);
-      setTimeout(() => {
-        // Simulate credential check
-        if (form.username === "admin" && form.password === "admin") {
-          setLoading(false);
-          navigate("/dashboard");
-        } else {
-          setLoading(false);
-          // Shake both fields for invalid credentials
-          if (usernameInput) usernameInput.classList.add("shake");
-          if (passwordInput) passwordInput.classList.add("shake");
-        }
-      }, 1200);
-    } else {
-      // Shake fields for missing input
-      if (!form.username && usernameInput) usernameInput.classList.add("shake");
-      if (!form.password && passwordInput) passwordInput.classList.add("shake");
+    try {
+      const response = await fetch("http://localhost:8000/api/token/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: form.username,
+          password: form.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.access) {
+        // Save token (localStorage or context)
+        localStorage.setItem("access_token", data.access);
+        setLoading(false);
+        navigate("/dashboard");
+      } else {
+        setLoading(false);
+        setEmptyError("Invalid username or password.");
+        if (usernameInput) usernameInput.classList.add("shake");
+        if (passwordInput) passwordInput.classList.add("shake");
+      }
+    } catch (err) {
+      setLoading(false);
+      setEmptyError("Login failed. Please try again.");
     }
   };
 

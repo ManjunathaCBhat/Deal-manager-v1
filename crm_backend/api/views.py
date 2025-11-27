@@ -851,9 +851,22 @@ class ActivityLogView(APIView):
 
 class RegisterView(APIView):
     def post(self, request):
-        username = request.data.get("username")
-        email = request.data.get("email")
-        password = request.data.get("password")
+        username = (request.data.get("username") or "").strip()
+        email = (request.data.get("email") or "").strip().lower()
+        password = request.data.get("password") or ""
+
+        if not email or not password:
+            return Response({"error": "Email and password are required"}, status=400)
+
+        # If no username provided, derive one from email and ensure uniqueness
+        if not username:
+            base = re.sub(r"[^a-z0-9._-]", "", (email.split("@")[0] if email else "").lower()) or "user"
+            candidate = base
+            i = 1
+            while User.objects.filter(username=candidate).exists():
+                i += 1
+                candidate = f"{base}{i}"
+            username = candidate
 
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists"}, status=400)
@@ -865,3 +878,4 @@ class RegisterView(APIView):
             "refresh": str(refresh),
             "access": str(refresh.access_token)
         }, status=status.HTTP_201_CREATED)
+
