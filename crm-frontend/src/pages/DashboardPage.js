@@ -43,6 +43,14 @@ function DashboardPage() {
   const totalContacts = customers.length;
   const pipelineValue = deals.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
 
+  // Example growth data, replace with real API if available
+  const growthData = {
+    contacts: '+12.5%',
+    companies: '+8.2%',
+    deals: '+15.3%',
+    revenue: '+23.1%'
+  };
+
   const stageColor = (stage) => {
     switch (stage.toLowerCase()) {
       case 'proposal': return 'blue';
@@ -74,16 +82,41 @@ const handleLogout = () => {
 
   return (
     <div className="dashboard-layout" style={{ display: 'flex', height: '100vh' }}>
-     
-   
-      {/* Main Content */}
       <main className="dashboard-main" style={{ flex: 1, background: '#f9fafb', padding: '2rem', overflowY: 'auto' }}>
-        {/* KPIs */}
+        {/* KPI Cards - Modern Style */}
         <div className="kpi-grid">
-          <KpiCard icon={<FaHandshake/>} value={totalDeals} label="Total Deals"/>
-          <KpiCard icon={<FaBuilding/>} value={totalCompanies} label="Active Companies"/>
-          <KpiCard icon={<FaUserPlus/>} value={totalContacts} label="New Contacts"/>
-          <KpiCard icon={<FaDollarSign/>} value={`$${pipelineValue.toLocaleString()}`} label="Pipeline Value"/>
+          <KpiCard
+            icon={<FaUserPlus size={32} />}
+            value={totalContacts}
+            label="Total Contacts"
+            growth={growthData.contacts}
+            color="#2563eb"
+            bgColor="rgba(37,99,235,0.08)"
+          />
+          <KpiCard
+            icon={<FaBuilding size={32} />}
+            value={totalCompanies}
+            label="Companies"
+            growth={growthData.companies}
+            color="#22c55e"
+            bgColor="rgba(34,197,94,0.08)"
+          />
+          <KpiCard
+            icon={<FaHandshake size={32} />}
+            value={totalDeals}
+            label="Active Deals"
+            growth={growthData.deals}
+            color="#a855f7"
+            bgColor="rgba(168,85,247,0.08)"
+          />
+          <KpiCard
+            icon={<FaDollarSign size={32} />}
+            value={`$${pipelineValue.toLocaleString()}`}
+            label="Revenue"
+            growth={growthData.revenue}
+            color="#f59e0b"
+            bgColor="rgba(245,158,11,0.08)"
+          />
         </div>
 
         {/* Active Deals */}
@@ -187,16 +220,20 @@ const handleLogout = () => {
   );
 }
 
-function KpiCard({icon, value, label, growth}) {
+function KpiCard({icon, value, label, growth, color, bgColor}) {
   return (
-      <div className="kpi-card">
-        <div className="icon">{icon}</div>
-        <div>
-          <h3>{value}</h3>
-          <p>{label}</p>
-          <span>{growth}</span>
+    <div className="kpi-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 24, borderRadius: 16, background: '#fff', boxShadow: '0 2px 8px rgba(30,58,138,0.04)', minHeight: 140 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ fontWeight: 500, fontSize: 16 }}>{label}</div>
+        <div style={{ background: bgColor, borderRadius: 12, padding: 8 }}>
+          <span style={{ color }}>{icon}</span>
         </div>
       </div>
+      <div style={{ fontSize: 32, fontWeight: 700, margin: '16px 0 0 0', color: '#111827' }}>{value}</div>
+      <div style={{ fontSize: 14, color: '#16a34a', marginTop: 8 }}>
+        <span style={{ fontWeight: 500 }}>↗ {growth}</span> <span style={{ color: '#6b7280', fontWeight: 400 }}>vs last month</span>
+      </div>
+    </div>
   );
 }
 

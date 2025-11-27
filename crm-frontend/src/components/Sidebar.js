@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Grid2x2, LayoutDashboard, Building2, Users, DollarSign, UserCog, Activity, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, LayoutDashboard, Building2, Users, DollarSign, UserCog, Activity, LogOut } from "lucide-react";
 import logoImg from "../pages/logo.png";
 import cirrusImg from "../pages/cirruslabs.png";
 
@@ -35,7 +35,10 @@ const Sidebar = (props) => {
   };
 
   const toggleButtonStyle = {
-    margin: "1.5rem 0 1rem 0",
+    position: "absolute",
+    top: "16px",
+    right: isOpen ? "16px" : "50%",
+    transform: isOpen ? "none" : "translateX(50%)",
     cursor: "pointer",
     color: "#fff",
     background: "transparent",
@@ -46,16 +49,17 @@ const Sidebar = (props) => {
     alignItems: "center",
     borderRadius: "6px",
     transition: "background 0.2s",
+    zIndex: 101,
   };
 
   const logoContainerStyle = {
     textAlign: "center",
     marginBottom: isOpen ? "0.5rem" : "1rem",
     width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "0.5rem",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      gap: isOpen ? "0.5rem" : 0,
   };
 
   const logoImgStyle = {
@@ -137,7 +141,7 @@ const Sidebar = (props) => {
     background: "#ef4444",
     border: "none",
     cursor: "pointer",
-    marginTop: "auto",
+    marginTop: "0rem",
     marginBottom: "2rem",
     textAlign: isOpen ? "left" : "center",
     width: "calc(100% - 1.5rem)",
@@ -156,56 +160,75 @@ const Sidebar = (props) => {
         onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
         onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       >
-        <Grid2x2 size={24} />
+        {isOpen ? <ChevronLeft size={24} /> : <ChevronRight size={24} />}
       </button>
 
-      <div style={logoContainerStyle}>
-        <img src={logoImg} alt="Logo" style={logoImgStyle} />
-        {isOpen && <img src={cirrusImg} alt="CirrusLabs" style={cirrusImgStyle} />}
+      <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", height: "100%", marginTop: "1.5cm" }}>
+        <div style={{ ...logoContainerStyle, marginBottom: 0 }}>
+            <img src={logoImg} alt="Logo" style={logoImgStyle} />
+            <img src={cirrusImg} alt="CirrusLabs" style={{ ...cirrusImgStyle, marginTop: 0 }} />
+            <div style={{ height: '0.2cm' }} />
+        </div>
+
+        <nav style={navStyle}>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.id}
+                to={item.path}
+                style={getNavItemStyle(item.id)}
+                onClick={() => setActivePage(item.id)}
+                onMouseEnter={(e) => {
+                  if (activePage !== item.id) {
+                    e.currentTarget.style.background = "#1e40af";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activePage !== item.id) {
+                    e.currentTarget.style.background = "#233e8b";
+                  }
+                }}
+              >
+                <div
+                  style={{
+                    width: isOpen ? "auto" : "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%"
+                  }}
+                >
+                  <Icon
+                    size={24}
+                    style={{
+                      ...iconStyle,
+                      margin: isOpen ? "0 0.2rem 0 0" : "0",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}
+                  />
+                </div>
+                <span style={labelStyle}>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div style={{ flex: 1 }} />
+        <button
+          style={logoutButtonStyle}
+          onClick={() => { setActivePage('dashboard'); navigate('/'); }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "#dc2626")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "#ef4444")}
+        >
+          <LogOut size={20} />
+          {isOpen && <span>Sign Out</span>}
+        </button>
       </div>
-
-      {/* Removed CRM Portal title as requested */}
-
-      <nav style={navStyle}>
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.id}
-              to={item.path}
-              style={getNavItemStyle(item.id)}
-              onClick={() => setActivePage(item.id)}
-              onMouseEnter={(e) => {
-                if (activePage !== item.id) {
-                  e.currentTarget.style.background = "#1e40af";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activePage !== item.id) {
-                  e.currentTarget.style.background = "#233e8b";
-                }
-              }}
-            >
-              <div style={{ width: isOpen ? "auto" : "100%", display: "flex", justifyContent: isOpen ? "flex-start" : "center", alignItems: "center" }}>
-                <Icon size={24} style={{ ...iconStyle, margin: isOpen ? "0 0.5rem 0 0" : "0 auto" }} />
-              </div>
-              <span style={labelStyle}>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      <button
-        style={logoutButtonStyle}
-        onClick={() => { setActivePage('dashboard'); navigate('/'); }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "#dc2626")}
-        onMouseLeave={(e) => (e.currentTarget.style.background = "#ef4444")}
-      >
-        <LogOut size={20} />
-        {isOpen && <span>Sign Out</span>}
-      </button>
     </aside>
-  );
-};
+      );
+}
 
 export default Sidebar;
