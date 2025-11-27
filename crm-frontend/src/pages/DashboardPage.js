@@ -73,11 +73,11 @@ const handleLogout = () => {
 };
 
   return (
-      <div className="dashboard-page">
-        {/* Header */}
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Manage and track your sales opportunities</p>
-
+    <div className="dashboard-layout" style={{ display: 'flex', height: '100vh' }}>
+     
+   
+      {/* Main Content */}
+      <main className="dashboard-main" style={{ flex: 1, background: '#f9fafb', padding: '2rem', overflowY: 'auto' }}>
         {/* KPIs */}
         <div className="kpi-grid">
           <KpiCard icon={<FaHandshake/>} value={totalDeals} label="Total Deals"/>
@@ -182,7 +182,8 @@ const handleLogout = () => {
               </div>
           ))}
         </div>
-      </div>
+      </main>
+    </div>
   );
 }
 

@@ -23,67 +23,67 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           <Route path="/dashboard" element={
-            <PrivateRoute>
+            
               <Layout activePage="dashboard">
                 <DashboardPage />
               </Layout>
-            </PrivateRoute>
+            
           } />
 
           <Route path="/activity-log" element={
-            <PrivateRoute>
+           
               <Layout activePage="activity-log">
                 <ActivityLogPage />
               </Layout>
-            </PrivateRoute>
+            
           } />
 
           <Route path="/user-management" element={
-            <PrivateRoute>
+            
               <Layout activePage="user-management">
                 <UserManagementPage />
               </Layout>
-            </PrivateRoute>
+            
           } />
 
           <Route path="/companies" element={
-            <PrivateRoute>
+            
               <Layout activePage="companies">
                 <CompaniesPage />
               </Layout>
-            </PrivateRoute>
+           
           } />
 
           <Route path="/deals" element={
-            <PrivateRoute>
+            
               <Layout activePage="deals">
                 <DealsPage />
               </Layout>
-            </PrivateRoute>
+           
           } />
 
           <Route path="/deal-details/:id" element={
-            <PrivateRoute>
+           
               <Layout activePage="deals">
                 <DealDetailsPage />
               </Layout>
-            </PrivateRoute>
+            
           } />
 
           <Route path="/deals/edit/:id" element={
-            <PrivateRoute>
+           
               <Layout activePage="deals">
                 <EditDealPage />
               </Layout>
-            </PrivateRoute>
+            
           } />
 
           <Route path="/customers" element={
-            <PrivateRoute>
+         
               <Layout activePage="customers">
                 <CustomersPage />
               </Layout>
-            </PrivateRoute>
+          
           } />
         </Routes>
       </Router>

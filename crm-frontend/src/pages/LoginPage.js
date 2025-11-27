@@ -183,7 +183,7 @@ const Login = () => {
                 textAlign: "center",
               }}
             >
-              Sales • Tickets • Accounts • Assets • Customers
+             • Companies • Customers • Deals   • Management 
             </p>
           </div>
         </div>
@@ -319,7 +319,7 @@ const Login = () => {
                   padding: "0 0.8rem", // 20% reduction from 1rem
                   border: errors.username ? "1.6px solid #ef4444" : "1.6px solid #e2e8f0",
                   borderRadius: "8px", // 20% reduction from 10px
-                  background: errors.username ? "#fef2f2" : "#f8fafc",
+                  background: errors.username ? "#fef2f2" : "#f8fafc", 
                   fontSize: "12.8px", // 20% reduction from 16px
                   transition: "all 0.3s ease",
                   outline: "none",
