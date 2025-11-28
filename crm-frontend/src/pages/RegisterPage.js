@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { register } from '../auth/auth';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './RegisterPage.css';
+import logoImage from "./logo.png";
 
 // Strength calculator for the colored bar + label
 const calcStrength = (pw) => {
@@ -86,13 +87,13 @@ const RegisterPage = () => {
       )}
 
       <form className="auth-box" onSubmit={handleSubmit} noValidate>
-        <h2 className="welcome-title">Welcome to CRM Portal</h2>
+        <h2 className="welcome-title">Welcome to Deal Manager Portal</h2>
         <img
           className="logo"
           alt="Cirrus Labs"
-          src="https://www.cirruslabs.io/hubfs/Cirruslabs-Assets-20/Images/Cirruslabs-Logo%20for%20Website.jpg"
+          src={logoImage}
         />
-        <div className="portal-title">CRM Portal</div>
+        {/* <div className="portal-title">CRM Portal</div> */}
         <p className="portal-subtitle">Create an Account to Manage and Protect</p>
 
         {/* Email */}

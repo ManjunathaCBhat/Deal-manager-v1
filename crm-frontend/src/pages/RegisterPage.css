@@ -18,14 +18,14 @@
 }
 
 .logo{
-  width:230px;
+  width:60px;
   height:auto;
   margin:10px auto 6px;
   display:block;
   object-fit:contain;
 }
 
-.welcome-title{ color:#1e3a8a; font-size:24px; font-weight:800; margin:0 0 2px; }
+.welcome-title{ color: #1c4fa3ff; text-align: center; font-size:22px; font-weight:800; margin:0 0 2px; }
 .portal-title{ font-size:16px; font-weight:700; margin:4px 0 2px; }
 .portal-subtitle{ color:#6b7280; font-size:13px; margin:0 0 14px; }
 
