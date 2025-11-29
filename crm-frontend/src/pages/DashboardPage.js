@@ -1,240 +1,205 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../auth/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import './DashboardPage.css';
-import {
-  FaHandshake,
-  FaBuilding,
-  FaUserPlus,
-  FaDollarSign,
-  FaBell,
-  FaUserCircle,
-  FaEdit,
-  FaEye,
-  FaEnvelope,
-  FaPhone
-} from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { Users, Building2, Target, TrendingUp, Calendar } from "lucide-react";
+import api from '../api/axios';
 
-function DashboardPage() {
-  const [deals, setDeals] = useState([]);
-  const [customers, setCustomers] = useState([]);
+// Card component, reusable for KPIs
+function KpiCard({ label, value, icon, growth, growthText, growthColor }) {
+  return (
+    <div style={{
+      flex: 1,
+      background: "#fff",
+      borderRadius: "16px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+      padding: "2rem",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start"
+    }}>
+      <div style={{
+        background: "#f1f5f9",
+        borderRadius: "12px",
+        padding: "0.75rem",
+        marginBottom: "1rem"
+      }}>
+        {icon}
+      </div>
+      <div style={{ fontSize: "1.1rem", fontWeight: 600, marginBottom: "0.5rem" }}>{label}</div>
+      <div style={{ fontSize: "2rem", fontWeight: 900, marginBottom: "0.5rem" }}>{value}</div>
+      <div style={{ color: growthColor || "#22c55e", fontWeight: 600, fontSize: "1rem" }}>
+        {growth} <span style={{ color: "#64748b", fontWeight: 400 }}>{growthText}</span>
+      </div>
+    </div>
+  );
+}
+
+// You can set fallback demo data here for dev/demo mode
+const DEMO_DATA = {
+  total_contacts: 30,
+  contacts_growth: "+12.5%",
+  total_companies: 7,
+  companies_growth: "+20%",
+  active_deals: 5,
+  deals_growth: "+8.6%",
+  revenue: "273,000",
+  revenue_growth: "+13%",
+  top_performers: [
+    { name: "Sarah Johnson", deals: 12, revenue: "$145,000", growth: "+23%" },
+    { name: "Mike Chen", deals: 9, revenue: "$98,000", growth: "+18%" },
+    { name: "Emily Davis", deals: 8, revenue: "$87,000", growth: "+15%" }
+  ],
+  tasks: [],
+  pipeline: [
+    { stage: "Prospecting", color: "#3b82f6", deals: 12, amount: "$45,000" },
+    { stage: "Qualification", color: "#eab308", deals: 8, amount: "$32,000" },
+    { stage: "Proposal", color: "#fb923c", deals: 5, amount: "$28,000" },
+    { stage: "Negotiation", color: "#ef4444", deals: 3, amount: "$18,000" },
+    { stage: "Closed Won", color: "#22c55e", deals: 7, amount: "$95,000" }
+  ]
+};
+
+export default function DashboardPage({ useDemo = false }) {
+  const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const dealRes = await axios.get('/api/deals/');
-        const customerRes = await axios.get('/api/customers/');
-        setDeals(dealRes.data);
-        setCustomers(customerRes.data);
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDashboardData();
-  }, []);
-
-  const totalDeals = deals.length;
-  const totalCompanies = new Set(deals.map((d) => d.company_name)).size;
-  const totalContacts = customers.length;
-  const pipelineValue = deals.reduce((sum, d) => sum + parseFloat(d.amount || 0), 0);
-
-  // Example growth data, replace with real API if available
-  const growthData = {
-    contacts: '+12.5%',
-    companies: '+8.2%',
-    deals: '+15.3%',
-    revenue: '+23.1%'
-  };
-
-  const stageColor = (stage) => {
-    switch (stage.toLowerCase()) {
-      case 'proposal': return 'blue';
-      case 'negotiation': return 'orange';
-      case 'qualified': return 'red';
-      case 'closing': return 'green';
-      case 'discovery': return 'purple';
-      default: return '';
+    if (useDemo) {
+      setDashboard(DEMO_DATA);
+      setLoading(false);
+      return;
     }
-  };
+    api.get("/api/dashboard-metrics/")
+      .then(res => {
+        setDashboard(res.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [useDemo]);
 
-  const stageLabel = (stage) => {
-    return stage.charAt(0).toUpperCase() + stage.slice(1);
-  };
-  const formatPhoneNumber = (phone) => {
-    if (!phone) return '-';
-    const cleaned = ('' + phone).replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    return match ? `(${match[1]}) ${match[2]}-${match[3]}` : phone;
-  };
+  if (loading) return <div>Loading...</div>;
+  if (!dashboard) return <div>Error loading dashboard data.</div>;
 
-  const { logout } = useAuth();
-const navigate = useNavigate();
+  // Prepare the data for KPI cards
+  const kpiData = [
+    {
+      label: "Total Contacts",
+      value: dashboard.total_contacts,
+      icon: <Users size={32} color="#3b82f6" />,
+      growth: dashboard.contacts_growth,
+      growthText: "vs last month"
+    },
+    {
+      label: "Companies",
+      value: dashboard.total_companies,
+      icon: <Building2 size={32} color="#22c55e" />,
+      growth: dashboard.companies_growth,
+      growthText: "vs last month"
+    },
+    {
+      label: "Active Deals",
+      value: dashboard.active_deals,
+      icon: <Target size={32} color="#a78bfa" />,
+      growth: dashboard.deals_growth,
+      growthText: "vs last month"
+    },
+    {
+      label: "Revenue",
+      value: `$${dashboard.revenue}`,
+      icon: <TrendingUp size={32} color="#fb923c" />,
+      growth: dashboard.revenue_growth,
+      growthText: "vs last month"
+    }
+  ];
 
-const handleLogout = () => {
-  logout();
-  navigate('/');
-};
+  const quickActions = [
+    { label: "Add Contact", icon: <Users size={24} />, color: "#3b82f6" },
+    { label: "Add Deal", icon: <Target size={24} />, color: "#22c55e" },
+    { label: "Schedule Meeting", icon: <Calendar size={24} />, color: "#a78bfa" }
+  ];
 
   return (
-    <div className="dashboard-layout" style={{ display: 'flex', height: '100vh' }}>
-      <main className="dashboard-main" style={{ flex: 1, background: '#f9fafb', padding: '2rem', overflowY: 'auto' }}>
-        {/* KPI Cards - Modern Style */}
-        <div className="kpi-grid">
-          <KpiCard
-            icon={<FaUserPlus size={32} />}
-            value={totalContacts}
-            label="Total Contacts"
-            growth={growthData.contacts}
-            color="#2563eb"
-            bgColor="rgba(37,99,235,0.08)"
-          />
-          <KpiCard
-            icon={<FaBuilding size={32} />}
-            value={totalCompanies}
-            label="Companies"
-            growth={growthData.companies}
-            color="#22c55e"
-            bgColor="rgba(34,197,94,0.08)"
-          />
-          <KpiCard
-            icon={<FaHandshake size={32} />}
-            value={totalDeals}
-            label="Active Deals"
-            growth={growthData.deals}
-            color="#a855f7"
-            bgColor="rgba(168,85,247,0.08)"
-          />
-          <KpiCard
-            icon={<FaDollarSign size={32} />}
-            value={`$${pipelineValue.toLocaleString()}`}
-            label="Revenue"
-            growth={growthData.revenue}
-            color="#f59e0b"
-            bgColor="rgba(245,158,11,0.08)"
-          />
-        </div>
+    <div style={{ padding: "2rem", background: "#f8fafc", minHeight: "100vh" }}>
+      {/* KPI Cards */}
+      <div style={{ display: "flex", gap: "2rem", marginBottom: "2rem" }}>
+        {kpiData.map((card, idx) => (
+          <KpiCard key={idx} {...card} />
+        ))}
+      </div>
 
-        {/* Active Deals */}
-        <div className="section-header">
-          <h3>Active Deals</h3>
-          <div style={{display: 'flex', gap: '16px', alignItems: 'center'}}>
-            <a href="/deals" className="view-all-link">View All</a>
+      {/* Middle Section */}
+      <div style={{ display: "flex", gap: "2rem", marginBottom: "2rem" }}>
+        {/* Quick Actions */}
+        <div style={{ flex: 2, background: "#fff", borderRadius: "16px", padding: "1.5rem", marginRight: "2rem" }}>
+          <div style={{ fontWeight: 700, fontSize: "1.2rem", marginBottom: "1.5rem" }}>Quick Actions</div>
+          <div style={{ display: "flex", gap: "1.5rem" }}>
+            {quickActions.map((action, idx) => (
+              <button key={idx} style={{
+                flex: 1,
+                background: "#f1f5f9",
+                border: "none",
+                borderRadius: "12px",
+                padding: "1.2rem",
+                fontWeight: 600,
+                fontSize: "1rem",
+                color: action.color,
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                cursor: "pointer"
+              }}>
+                {action.icon}
+                {action.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <table className="deals-table">
-          <thead>
-          <tr>
-            <th>Deal Name</th>
-            <th>Company</th>
-            <th>Deal Value</th>
-            <th>Stage</th>
-            <th>Contacts</th>
-            <th>Close Date</th>
-            <th>Actions</th>
-          </tr>
-          </thead>
-          <tbody>
-          {loading ? (
-              <tr>
-                <td colSpan="7">Loading...</td>
-              </tr>
-          ) : deals.length === 0 ? (
-              <tr>
-                <td colSpan="7">No deals available.</td>
-              </tr>
-          ) : (
-              deals.slice(0, 6).map((deal) => (
-                  <tr key={deal.id}>
-                    <td>{deal.title}</td>
-                    <td>{deal.company_name}</td>
-                    <td>${parseFloat(deal.amount).toLocaleString()}</td>
-                    <td className={`stage ${stageColor(deal.stage)}`}>{stageLabel(deal.stage)}</td>
-                    <td>
-                      {deal.contacts.length > 0 ? deal.contacts.map(c => (
-                          <div key={c.id} style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-                            <img src={c.avatar_url} alt={c.name} style={{width: 24, height: 24, borderRadius: '50%'}}/>
-                            {c.name}
-                          </div>
-                      )) : '—'}
-                    </td>
-                    <td>{deal.close_date || '—'}</td>
-                    <td className="action-icon">
-                      <Link to={`/deal-details/${deal.id}`}>
-                        <FaEye style={{cursor: 'pointer'}}/>
-                      </Link>
-                    </td>
-
-                  </tr>
-              ))
-          )}
-          </tbody>
-        </table>
-
-        {/* Recent Customers */}
-        <div className="recent-customers">
-          <div className="recent-header">
-            <h3>Recent Customers</h3>
-            <a href="/customers">View All</a>
-          </div>
-          {customers.slice(0, 4).map((c) => (
-              <div key={c.id} className="customer-row">
-                <div className="customer-left">
-                  <img
-                      src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                      alt="Default Avatar"
-                      className="default-avatar"
-                  />
-                  <div className="customer-info">
-                    <strong>{c.name}</strong>
-                    <p>
-                      <FaEnvelope className="icon"/>
-                      <a
-                        href={`mailto:${c.email}`}
-                        className="contact-link"
-                      >
-                        {c.email}
-                      </a>
-                      &nbsp;&nbsp;&nbsp;&nbsp;
-                      <FaPhone className="icon"/>
-                      <a
-                        href={`tel:${c.phone_number}`}
-                        className="contact-link"
-                      >
-                        {formatPhoneNumber(c.phone_number)}
-                      </a>
-                    </p>
-                  </div>
+        {/* Top Performers & Upcoming Tasks */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {/* Top Performers */}
+          <div style={{ background: "#fff", borderRadius: "16px", padding: "1.5rem" }}>
+            <div style={{ fontWeight: 700, fontSize: "1.2rem", marginBottom: "1rem" }}>Top Performers</div>
+            {dashboard.top_performers && dashboard.top_performers.length > 0 ? dashboard.top_performers.map((p, idx) => (
+              <div key={idx} style={{ display: "flex", alignItems: "center", marginBottom: "0.75rem" }}>
+                <div style={{
+                  width: "32px", height: "32px", borderRadius: "50%",
+                  background: ["#fde68a", "#e0e7ff", "#fbcfe8"][idx % 3],
+                  display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "1.1rem", marginRight: "1rem"
+                }}>{idx + 1}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600 }}>{p.name}</div>
+                  <div style={{ fontSize: "0.95rem", color: "#64748b" }}>{p.deals} deals • {p.revenue}</div>
                 </div>
-                <span className="customer-amount">New Contact</span>
+                <div style={{ color: "#22c55e", fontWeight: 600 }}>{p.growth}</div>
               </div>
-          ))}
+            )) : <div style={{ color: "#64748b" }}>No performers</div>}
+          </div>
+          {/* Upcoming Tasks */}
+          <div style={{ background: "#fff", borderRadius: "16px", padding: "1.5rem" }}>
+            <div style={{ fontWeight: 700, fontSize: "1.2rem", marginBottom: "1rem" }}>Upcoming Tasks</div>
+            {dashboard.tasks && dashboard.tasks.length > 0 ? dashboard.tasks.map((task, idx) => (
+              <div key={idx} style={{ color: "#64748b", fontSize: "1rem", marginBottom: "0.5rem" }}>{task.title}</div>
+            )) : <div style={{ color: "#64748b", fontSize: "1rem" }}>No upcoming tasks</div>}
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* Deal Pipeline Overview */}
+      <div style={{ background: "#fff", borderRadius: "16px", padding: "2rem", marginBottom: "2rem" }}>
+        <div style={{ fontWeight: 700, fontSize: "1.2rem", marginBottom: "1.5rem" }}>Deal Pipeline Overview</div>
+        {dashboard.pipeline && dashboard.pipeline.length > 0 ? dashboard.pipeline.map((stage, idx) => (
+          <div key={idx} style={{
+            display: "flex", alignItems: "center", marginBottom: "1.2rem"
+          }}>
+            <div style={{
+              width: "16px", height: "16px", borderRadius: "50%",
+              background: stage.color, marginRight: "1rem"
+            }} />
+            <div style={{ flex: 1, fontWeight: 600 }}>{stage.stage}</div>
+            <div style={{ color: "#64748b", marginRight: "2rem" }}>{stage.deals} deals</div>
+            <div style={{ fontWeight: 700 }}>{stage.amount}</div>
+          </div>
+        )) : <div style={{ color: "#64748b" }}>No pipeline data</div>}
+      </div>
     </div>
   );
 }
-
-function KpiCard({icon, value, label, growth, color, bgColor}) {
-  return (
-    <div className="kpi-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 24, borderRadius: 16, background: '#fff', boxShadow: '0 2px 8px rgba(30,58,138,0.04)', minHeight: 140 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontWeight: 500, fontSize: 16 }}>{label}</div>
-        <div style={{ background: bgColor, borderRadius: 12, padding: 8 }}>
-          <span style={{ color }}>{icon}</span>
-        </div>
-      </div>
-      <div style={{ fontSize: 32, fontWeight: 700, margin: '16px 0 0 0', color: '#111827' }}>{value}</div>
-      <div style={{ fontSize: 14, color: '#16a34a', marginTop: 8 }}>
-        <span style={{ fontWeight: 500 }}>↗ {growth}</span> <span style={{ color: '#6b7280', fontWeight: 400 }}>vs last month</span>
-      </div>
-    </div>
-  );
-}
-
-export default DashboardPage;

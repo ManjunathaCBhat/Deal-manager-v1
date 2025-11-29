@@ -53,10 +53,10 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/token/", {
+      const response = await fetch("http://localhost:8000/api/auth/token", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
           username: form.username,
           password: form.password,
         }),
@@ -64,9 +64,9 @@ const Login = () => {
 
       const data = await response.json();
 
-      if (response.ok && data.access) {
+      if (response.ok && data.access_token) {
         // Save token (localStorage or context)
-        localStorage.setItem("access_token", data.access);
+        localStorage.setItem("access_token", data.access_token);
         setLoading(false);
         navigate("/dashboard");
       } else {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './CustomersPage.css';
 import { FaPhone, FaEnvelope, FaBell } from 'react-icons/fa';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ const CustomersPage = () => {
   };
   const fetchCustomers = async () => {
     try {
-      const res = await axios.get('/api/customers/');
+      const res = await api.get('/api/customers/');
       setCustomers(res.data);
     } catch (err) {
       console.error(err);

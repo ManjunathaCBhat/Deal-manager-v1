@@ -1,5 +1,5 @@
 """
-WSGI config for crm_backend project.
+WSGI project for crm_backend project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

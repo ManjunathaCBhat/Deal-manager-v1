@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from '../api/axios';
 import "./EditDealPage.css";
 
 const EditDealPage = () => {
@@ -16,9 +16,9 @@ const EditDealPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const dealRes = await axios.get(`/api/deals/${id}/`);
-        const companiesRes = await axios.get(`/api/companies/`);
-        const customersRes = await axios.get(`/api/customers/`);
+        const dealRes = await api.get(`/api/deals/${id}/`);
+        const companiesRes = await api.get(`/api/companies/`);
+        const customersRes = await api.get(`/api/customers/`);
         setDeal(dealRes.data);
         setCompanies(companiesRes.data);
         setCustomers(customersRes.data);
@@ -44,7 +44,7 @@ const EditDealPage = () => {
     setSaving(true);
     setError(null);
     try {
-        await axios.put(`/api/deals/${id}/`, deal);
+        await api.put(`/api/deals/${id}/`, deal);
         navigate(`/deal-details/${id}`);
     } catch (err) {
       console.error(err);

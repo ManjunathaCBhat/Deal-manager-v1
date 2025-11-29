@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import './DealsPage.css';
 import { FaBell, FaEnvelope, FaPhone } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -23,7 +23,7 @@ const DealsPage = () => {
 
   const fetchDeals = async () => {
     try {
-      const res = await axios.get('/api/deals/');
+      const res = await api.get('/api/deals/');
       setDeals(res.data);
     } catch (err) {
       console.error(err);

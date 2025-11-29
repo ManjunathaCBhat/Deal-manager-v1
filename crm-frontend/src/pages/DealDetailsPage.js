@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import api from '../api/axios';
 import "./DealDetailsPage.css";
 import { FaBell, FaPhone, FaEnvelope } from "react-icons/fa";
 import { useAuth } from '../auth/AuthContext';
@@ -20,7 +20,7 @@ const DealDetailsPage = () => {
   useEffect(() => {
     const fetchDeal = async () => {
       try {
-        const response = await axios.get(`/api/deals/${id}/`);
+        const response = await api.get(`/api/deals/${id}/`);
         setDeal(response.data);
         console.log("Fetched deal:", response.data);
       } catch (err) {
