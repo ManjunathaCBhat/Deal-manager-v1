@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import BaseModel
 from datetime import timedelta
+from typing import Optional
+import logging
 from app.models.user import User, UserCreate, UserResponse, Token
 from app.auth import (
     get_password_hash,
@@ -9,8 +12,95 @@ from app.auth import (
     create_refresh_token,
     get_current_active_user,
 )
+from app.azure_auth import (
+    validate_azure_token,
+    get_or_create_azure_user,
+    get_azure_settings,
+)
+from app.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+class AzureTokenRequest(BaseModel):
+    """Request body for Azure AD token exchange"""
+    access_token: str
+
+
+class SSOConfigResponse(BaseModel):
+    """SSO configuration for frontend"""
+    enabled: bool
+    tenant_id: Optional[str] = None
+    client_id: Optional[str] = None
+    redirect_uri: Optional[str] = None
+
+
+@router.get("/sso-config", response_model=SSOConfigResponse)
+async def get_sso_config():
+    """Get SSO configuration for frontend MSAL setup"""
+    azure_settings = get_azure_settings()
+    settings = get_settings()
+    
+    if not azure_settings:
+        return SSOConfigResponse(enabled=False)
+    
+    return SSOConfigResponse(
+        enabled=True,
+        tenant_id=azure_settings.tenant_id,
+        client_id=azure_settings.client_id,
+        redirect_uri=settings.openrouter_site_url
+    )
+
+
+@router.post("/azure/token", response_model=Token)
+async def azure_login(request: AzureTokenRequest):
+    """
+    Exchange Azure AD access token for application JWT tokens.
+    
+    This endpoint:
+    1. Validates the Azure AD token
+    2. Creates or retrieves the user in our database
+    3. Issues our own JWT tokens for subsequent API calls
+    """
+    try:
+        logger.info("Received Azure token exchange request")
+        
+        # Validate Azure token and get user info
+        azure_user = await validate_azure_token(request.access_token)
+        logger.info(f"Azure user validated: {azure_user.preferred_username}")
+        
+        # Get or create user in our database
+        user = await get_or_create_azure_user(azure_user)
+        logger.info(f"User retrieved/created: {user.get('username')}")
+        
+        if not user.get("is_active", True):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User account is disabled",
+            )
+        
+        # Create our application tokens
+        access_token = create_access_token(data={"sub": user["username"]})
+        refresh_token = create_refresh_token(data={"sub": user["username"]})
+        
+        logger.info(f"Tokens created successfully for user: {user['username']}")
+        
+        return Token(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Azure AD authentication failed: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Azure AD authentication failed: {str(e)}",
+        )
 
 
 @router.post("/token", response_model=Token)

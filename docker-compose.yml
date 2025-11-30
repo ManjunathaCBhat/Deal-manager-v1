@@ -38,6 +38,10 @@ services:
       - ALGORITHM=HS256
       - ACCESS_TOKEN_EXPIRE_MINUTES=30
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      # Azure AD SSO (optional)
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID:-}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET:-}
     depends_on:
       mongodb:
         condition: service_healthy
@@ -49,6 +53,11 @@ services:
     build:
       context: ./crm-frontend
       dockerfile: Dockerfile
+      args:
+        # Pass Azure config at build time for React
+        - REACT_APP_AZURE_TENANT_ID=${AZURE_TENANT_ID:-}
+        - REACT_APP_AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-}
+        - REACT_APP_REDIRECT_URI=${REACT_APP_REDIRECT_URI:-http://localhost:3000}
     container_name: crm-frontend
     restart: unless-stopped
     ports:

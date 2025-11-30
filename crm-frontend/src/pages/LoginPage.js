@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import logoImage from "./logo.png";
 import cirruslabsImage from "./cirruslabs.png";
+import { useAzureAuth } from "../auth";
+import api from "../api/axios";
 
 const Login = () => {
     // Navigation handlers
@@ -13,13 +15,40 @@ const Login = () => {
     const handleForgotPassword = () => {
       window.location.href = "/forgot-password";
     };
-    // (moved below)
+    
+  // Azure SSO hook
+  const { 
+    loginWithMicrosoft, 
+    handleRedirectResponse,
+    isAzureSSOConfigured,
+    loading: msLoading, 
+    error: azureError,
+    clearError: clearAzureError 
+  } = useAzureAuth();
+
   const [form, setForm] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [msLoading, setMsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [emptyError, setEmptyError] = useState("");
+
+  // Handle Azure redirect response on component mount
+  useEffect(() => {
+    const checkRedirectResponse = async () => {
+      const result = await handleRedirectResponse();
+      if (result?.success) {
+        navigate("/dashboard");
+      }
+    };
+    checkRedirectResponse();
+  }, [handleRedirectResponse, navigate]);
+
+  // Show Azure errors
+  useEffect(() => {
+    if (azureError) {
+      setEmptyError(azureError);
+    }
+  }, [azureError]);
 
   const handleChange = (e) => {
     const value = e.target.name === "username" ? e.target.value.replace(/^\s+/, "") : e.target.value;
@@ -36,6 +65,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setEmptyError("");
+    clearAzureError();
     setLoading(true);
 
     // Remove shake class before re-adding (for repeated animation)
@@ -53,18 +83,19 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
+      const response = await api.post("/api/auth/token", 
+        new URLSearchParams({
           username: form.username,
           password: form.password,
         }),
-      });
+        {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        }
+      );
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (response.ok && data.access_token) {
+      if (data.access_token) {
         // Save token (localStorage or context)
         localStorage.setItem("access_token", data.access_token);
         setLoading(false);
@@ -77,17 +108,44 @@ const Login = () => {
       }
     } catch (err) {
       setLoading(false);
-      setEmptyError("Login failed. Please try again.");
+      const errorMsg = err.response?.data?.detail || "Login failed. Please try again.";
+      setEmptyError(errorMsg);
+      if (usernameInput) usernameInput.classList.add("shake");
+      if (passwordInput) passwordInput.classList.add("shake");
     }
   };
 
-  const handleMicrosoftSignIn = () => {
-    setMsLoading(true);
-    // Simulate Microsoft SSO
-    setTimeout(() => {
-      setMsLoading(false);
-      console.log("Microsoft SSO initiated");
-    }, 1200);
+  const handleMicrosoftSignIn = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setEmptyError("");
+    clearAzureError();
+    
+    if (!isAzureSSOConfigured) {
+      setEmptyError("Microsoft SSO is not configured. Please contact your administrator.");
+      return;
+    }
+
+    try {
+      const result = await loginWithMicrosoft();
+      console.log("Microsoft SSO result:", result);
+      
+      if (result && result.success) {
+        navigate("/dashboard");
+      } else if (result && result.error) {
+        // Don't show error if user cancelled the popup
+        if (!result.error.includes("user_cancelled") && !result.error.includes("popup_window_error")) {
+          setEmptyError(result.error);
+        }
+      }
+    } catch (err) {
+      console.error("Microsoft SSO error:", err);
+      // Don't show error if user cancelled
+      if (!err.message?.includes("user_cancelled")) {
+        setEmptyError(err.message || "Microsoft sign-in failed");
+      }
+    }
   };
 
   // Generate animated dots for background
@@ -235,6 +293,7 @@ const Login = () => {
 
           {/* Microsoft SSO Button */}
           <button
+            type="button"
             onClick={handleMicrosoftSignIn}
             disabled={msLoading}
             style={{
