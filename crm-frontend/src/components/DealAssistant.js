@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './DealAssistant.css';
 import { FaMicrophone } from 'react-icons/fa';
-import axios from 'axios';
+import api from '../api/axios';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
@@ -24,7 +24,7 @@ const DealAssistant = () => {
     const bootConversation = async () => {
       setLoading(true);
       try {
-        const res = await axios.post('/deal-chat/', {
+        const res = await api.post('/api/deal-chat/', {
           message: 'start new deal',
           deal_state: null,
         });
@@ -53,7 +53,7 @@ const DealAssistant = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('/deal-chat/', {
+      const res = await api.post('/api/deal-chat/', {
         message: trimmed,
         deal_state: dealState,
       });

@@ -1,0 +1,86 @@
+# Google Cloud Build configuration
+# Builds and deploys the CRM application
+
+steps:
+  # Build the backend Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/crm-backend:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/crm-backend:latest'
+      - './fastapi_backend'
+    id: 'build-backend'
+
+  # Build the frontend Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/crm-frontend:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/crm-frontend:latest'
+      - './crm-frontend'
+    id: 'build-frontend'
+
+  # Push backend image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/crm-backend:$COMMIT_SHA'
+    id: 'push-backend'
+
+  # Push frontend image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/crm-frontend:$COMMIT_SHA'
+    id: 'push-frontend'
+
+  # Deploy backend to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'crm-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/crm-backend:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+    id: 'deploy-backend'
+
+  # Deploy frontend to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'crm-frontend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/crm-frontend:$COMMIT_SHA'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+    id: 'deploy-frontend'
+
+# Store images in Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/crm-backend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/crm-backend:latest'
+  - 'gcr.io/$PROJECT_ID/crm-frontend:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/crm-frontend:latest'
+
+# Substitution variables
+substitutions:
+  _REGION: 'us-central1'
+
+# Build options
+options:
+  logging: CLOUD_LOGGING_ONLY

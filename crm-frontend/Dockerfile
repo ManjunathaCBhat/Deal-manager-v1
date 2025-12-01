@@ -1,21 +1,43 @@
-# crm/Dockerfile
-
-FROM node:20-alpine
+# Build stage
+FROM node:18-alpine AS build
 
 WORKDIR /app
 
-# Install dependencies first for better caching
-COPY package*.json /app/
+# Accept build arguments for Azure SSO
+ARG REACT_APP_AZURE_TENANT_ID
+ARG REACT_APP_AZURE_CLIENT_ID
+ARG REACT_APP_REDIRECT_URI
+ARG REACT_APP_API_URL
 
-RUN npm install
+# Set environment variables for build
+ENV REACT_APP_AZURE_TENANT_ID=$REACT_APP_AZURE_TENANT_ID
+ENV REACT_APP_AZURE_CLIENT_ID=$REACT_APP_AZURE_CLIENT_ID
+ENV REACT_APP_REDIRECT_URI=$REACT_APP_REDIRECT_URI
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
-# Copy rest of the app
-COPY . /app/
+# Copy package files
+COPY package*.json ./
 
-# Expose Next dev port
-EXPOSE 3000
+# Install dependencies
+RUN npm ci --silent
 
-# Use env variables at runtime (NEXT_PUBLIC_AZURE_CLIENT_ID, etc)
-# You will pass them via docker-compose or the Azure App Service config
+# Copy source code
+COPY . .
 
-CMD ["npm", "run", "dev", "--", "-p", "3000", "-H", "0.0.0.0"]
+# Build the app
+RUN npm run build
+
+# Production stage
+FROM nginx:alpine
+
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built assets from build stage
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

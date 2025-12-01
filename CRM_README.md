@@ -6,7 +6,6 @@ A scalable multi-role **Customer Relationship Management (CRM)** system built wi
 
 ### Core Capabilities
 - **Multi-Role System**: Distinct role-based access for **Admins**, **Sales Reps**, and **Managers**.  
-- **Secure Authentication**: Role-based access control with JWT.  
 - **CRM Dashboard**: Intuitive UI aligned to **Figma** prototypes.  
 - **Deal Management**: Create, update, and track deals across pipelines.  
 - **Speech-to-Text Integration**: Google Speech-to-Text API for **voice-driven deal creation**.  
@@ -92,3 +91,26 @@ Future development will focus on:
 - **Rayhaan Mohammed** – Business Analyst  
 - **Kasim Rizvi** – Tester 
 - **Special Thanks**: Sarthak (mentor), Carlos (technical guidance)
+
+
+
+
+
+How to Run
+Windows:
+run.bat dev       # Start development mode
+run.bat docker    # Start with Docker
+run.bat stop      # Stop all services
+run.bat install   # Install dependencies
+
+macOS/Linux:
+./run.sh dev
+./run.sh docker
+./run.sh stop
+./run.sh install
+
+
+
+
+
+

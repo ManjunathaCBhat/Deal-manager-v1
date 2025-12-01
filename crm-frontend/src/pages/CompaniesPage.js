@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaPlus } from "react-icons/fa";
+import { FaEye, FaEdit, FaFilter, FaBell, FaEnvelope, FaPhone } from "react-icons/fa";
 import "./CompaniesPage.css";
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ const CompaniesPage = () => {
 
   const fetchCompanies = async () => {
     try {
-      const res = await axios.get("/api/companies/");
+      const res = await api.get("/api/companies/");
       setCompanies(res.data);
     } catch (err) {
       console.error(err);
