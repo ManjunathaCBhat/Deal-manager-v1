@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaEdit, FaFilter, FaBell, FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import "./CompaniesPage.css";
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -11,14 +11,9 @@ const CompaniesPage = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const { logout } = useAuth();
   const navigate = useNavigate();
-
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   const fetchCompanies = async () => {
     try {
@@ -41,138 +36,103 @@ const CompaniesPage = () => {
   );
 
   return (
-    <div className="companies-page">
-      <h1 className="page-title">Companies</h1>
-      <p className="page-subtitle">Manage your company database</p>
+    <div className="companies-page-layout">
+      {/* Left Section */}
+      <div className="companies-left">
+        {/* Search and Filter */}
+        <div className="search-filter-card">
+          <div className="search-filter-section">
+            <div className="search-input-wrapper">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search companies..."
+                className="search-bar"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="filter-btn">All Industries</button>
+          </div>
+        </div>
 
-      {/* Search */}
-      <div className="companies-controls">
-        <input
-            type="text"
-            placeholder="Search companies..."
-            className="search-bar"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-        />
-        <FaFilter className="filter-icon" />
-      </div>
 
-      {/* Table */}
-      <div className="table-wrapper">
-        <table className="companies-table">
-          <thead>
-            <tr>
-              <th>Company Name</th>
-              <th>Industry</th>
-              <th>Location</th>
-              <th>Linked Contacts</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="5" className="loading-cell">Loading...</td>
-              </tr>
-            ) : error ? (
-              <tr>
-                <td colSpan="5" className="error-cell">{error}</td>
-              </tr>
-            ) : filteredCompanies.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="empty-cell">No companies found.</td>
-              </tr>
-            ) : (
-              filteredCompanies.map((company) => (
-                <tr key={company.id}>
-                  <td>
-                    <div className="company-info">
-                      <span className="company-icon">🏢</span>
-                      <div>
-                        <strong>{company.name || "-"}</strong><br />
-                        {company.website && (
-                          <a
-                            href={
-                              company.website.startsWith("http")
-                                ? company.website
-                                : `https://${company.website}`
-                            }
-                            target="_blank"
-                            rel="noreferrer"
-                            className="company-link"
-                          >
-                            {company.website}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span
-                      className={`industry industry-${company.industry?.toLowerCase() || "default"}`}
-                      style={{ color: company.industry_color || undefined }}
-                    >
-                      {company.industry?.split(' ')
-                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                        .join(' ') || "-"}
-                    </span>
-                  </td>
-                  <td>{company.location || "-"}</td>
-                  <td>
-                    <div className="contact-info">
-                      {company.customers?.length > 0 ? (
-                        company.customers.map(c => (
-                          <div key={c.id} className="contact-card">
-                            <img
-                              src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                              alt={c.name}
-                            />
-                            <span className="contact-name">{c.name}</span>
-                            <div className="contact-links">
-                              {c.email && (
-                                <a href={`mailto:${c.email}`} title={c.email}>
-                                  <FaEnvelope />
-                                </a>
-                              )}
-                              {c.phone_number && (
-                                <a href={`tel:${c.phone_number}`} title={c.phone_number}>
-                                  <FaPhone />
-                                </a>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <span>—</span>
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      <FaEye className="action-icon" />
-                      <FaEdit className="action-icon" />
-                    </div>
-                  </td>
+        {/* Companies Count Header */}
+        <div className="companies-card">
+          <div className="companies-header">
+            <h2>Companies ({filteredCompanies.length})</h2>
+          </div>
+
+          {/* Table */}
+          <div className="table-wrapper">
+            <table className="companies-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Industry</th>
+                  <th>Size</th>
+                  <th>Contacts</th>
+                  <th>Deal Value</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="pagination">
-        <span>Showing {filteredCompanies.length} companies</span>
-        <div className="page-controls">
-          <span>Previous</span>
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>Next</span>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="5" className="loading-cell">Loading...</td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan="5" className="error-cell">{error}</td>
+                  </tr>
+                ) : filteredCompanies.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="empty-cell">No companies found.</td>
+                  </tr>
+                ) : (
+                  filteredCompanies.map((company) => (
+                    <tr key={company.id} onClick={() => setSelectedCompany(company)} className={selectedCompany?.id === company.id ? 'selected' : ''}>
+                      <td>
+                        <div className="company-info">
+                          <span className="company-icon">🏢</span>
+                          <strong>{company.name || "-"}</strong>
+                        </div>
+                      </td>
+                      <td>{company.industry || "-"}</td>
+                      <td>{company.size || "-"}</td>
+                      <td>{company.customers?.length || 0}</td>
+                      <td>{company.deal_value || "-"}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+
+      {/* Right Sidebar */}
+      <div className="companies-right">
+        <div className="panel-card">
+          {selectedCompany ? (
+            <div className="company-details">
+              <h3>{selectedCompany.name}</h3>
+              <p>Details will appear here</p>
+            </div>
+          ) : (
+            <div className="no-selection">
+              <div className="no-selection-icon">🏢</div>
+              <h3>No Company Selected</h3>
+              <p>Select a company from the list to view their details</p>
+            </div>
+          )}
+        </div>
+      </div>
+      <button className="add-company-btn">
+        <FaPlus /> Add Company
+      </button>
     </div>
   );
 };
+
 
 export default CompaniesPage;
