@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     openrouter_site_url: str = "http://localhost:3000"
     openrouter_site_name: str = "CRM Deal Assistant"
 
+    # CORS
+    cors_origins: str = "http://localhost:3000,http://localhost:5173"
+    frontend_url: str = "http://localhost:3000"
+
     class Config:
         env_file = find_env_file()
         extra = "ignore"
