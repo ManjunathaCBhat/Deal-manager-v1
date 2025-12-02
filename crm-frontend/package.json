@@ -13,6 +13,8 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.11.0",
+    "flowbite": "^4.0.1",
+    "flowbite-react": "^0.12.10",
     "lucide-react": "^0.460.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -46,7 +48,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://backend:8000",
+  "proxy": "http://localhost:8000",
   "devDependencies": {
     "autoprefixer": "^10.4.22",
     "postcss": "^8.5.6",

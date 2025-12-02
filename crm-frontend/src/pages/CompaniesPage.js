@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaEdit, FaFilter, FaBell, FaEnvelope, FaPhone } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import "./CompaniesPage.css";
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ const CompaniesPage = () => {
 
   const fetchCompanies = async () => {
     try {
-      const res = await api.get("/api/companies/");
+      const res = await axios.get("/api/companies/");
       setCompanies(res.data);
     } catch (err) {
       console.error(err);
@@ -39,8 +39,21 @@ const CompaniesPage = () => {
     <div className="companies-page-layout">
       {/* Left Section */}
       <div className="companies-left">
+        <div className="header-section">
+          <div className="header-top">
+            <div>
+              <h1 className="page-title">Companies</h1>
+              <p className="page-subtitle">Manage your business relationships</p>
+            </div>
+
+            <button className="add-company-btn">
+              <FaPlus /> Add Company
+            </button>
+          </div>
+        </div>
+
         {/* Search and Filter */}
-        <div className="search-filter-card">
+        {/* <div className="search-filter-card">
           <div className="search-filter-section">
             <div className="search-input-wrapper">
               <span className="search-icon">🔍</span>
@@ -54,7 +67,7 @@ const CompaniesPage = () => {
             </div>
             <button className="filter-btn">All Industries</button>
           </div>
-        </div>
+        </div> */}
 
 
         {/* Companies Count Header */}
@@ -93,7 +106,7 @@ const CompaniesPage = () => {
                     <tr key={company.id} onClick={() => setSelectedCompany(company)} className={selectedCompany?.id === company.id ? 'selected' : ''}>
                       <td>
                         <div className="company-info">
-                          <span className="company-icon">🏢</span>
+                          {/* <span className="company-icon">🏢</span> */}
                           <strong>{company.name || "-"}</strong>
                         </div>
                       </td>
@@ -127,9 +140,6 @@ const CompaniesPage = () => {
           )}
         </div>
       </div>
-      <button className="add-company-btn">
-        <FaPlus /> Add Company
-      </button>
     </div>
   );
 };
