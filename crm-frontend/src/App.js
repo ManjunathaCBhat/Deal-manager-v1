@@ -13,6 +13,8 @@ import PrivateRoute from './auth/PrivateRoute';
 import { AuthProvider } from './auth/AuthContext';
 import RegisterPage from './pages/RegisterPage';
 import Layout from './components/Layout';
+import PipelinePage from "./pages/PipelinePage";
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/pipeline" element={<PipelinePage />} />
 
           <Route path="/dashboard" element={
             
