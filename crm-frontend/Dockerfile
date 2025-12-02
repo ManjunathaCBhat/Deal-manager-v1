@@ -36,12 +36,8 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built assets from build stage
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy startup script
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Expose port (Cloud Run will use PORT env var)
+# Expose port 8080 for Cloud Run
 EXPOSE 8080
 
-# Start nginx with dynamic port
-CMD ["/start.sh"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
